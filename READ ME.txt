@@ -1,0 +1,20 @@
+Progress: 	
+	- Working control through XMLR-PC
+
+Known Bugs: 		
+	- Tx missing length for Protocol Formatter
+	
+
+To Do: 
+	- Need to find amplifications settings for different Frequencies and Constellations
+	  Currently only 915 MHz with BPSK is working to my knowledge. (This is why program
+	  always selects this frequency and constellation.
+	- Implement packetizer
+	- Implement ZMQ
+	- Develope and implement decision algorithms (While there is a
+	  function that selects frequency and constellation, it will need to be
+	  updated to take strings from from the decision ["LOW", "MID", "HIGH]
+	  ["BPSK","QPSK","16QAM"]) 
+	- Fix Bugs
+	- Remove Herobrine
+		 

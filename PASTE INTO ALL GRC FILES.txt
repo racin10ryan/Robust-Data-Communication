@@ -1,0 +1,9 @@
+def changeConstellations(self, constellString):
+        temp = None
+        if constellString == "BPSK":
+            temp = digital.constellation_bpsk().base()
+        elif constellString == "QPSK":
+            temp = digital.constellation_qpsk().base()
+        elif constellString == "16QAM":
+            temp = digital.constellation_16qam().base()
+        self.set_payload_chosen_constellation(temp)
