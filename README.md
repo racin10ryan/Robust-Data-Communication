@@ -11,9 +11,8 @@ Known Bugs:
 
 Bugs Fixed:
 	- General Bug fixes
-To Do: 
+To Do:
 	- Finish Implementing packetizer
-	- Develope and implement decisions based on power. (Should return strings "BPSK", "QPSK", and "16QAM" 
+	- Develope and implement decisions based on power. (Should return strings "BPSK", "QPSK", and "16QAM"
 	- Fix Bugs
 	- Remove Herobrine
-		 
