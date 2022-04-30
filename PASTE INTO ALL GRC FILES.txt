@@ -1,3 +1,4 @@
+
 def changeConstellations(self, constellString):
         temp = None
         if constellString == "BPSK":
@@ -7,3 +8,48 @@ def changeConstellations(self, constellString):
         elif constellString == "16QAM":
             temp = digital.constellation_16qam().base()
         self.set_payload_chosen_constellation(temp)
+
+    def enableFlow(self, d_enable):
+        self.blocks_copy_0.set_enabled(d_enable)
+
+    def configureFile(self, fileLocation):
+        self.disconnect((self.blocks_file_source_0_0, 0), (self.blocks_copy_0, 0))
+        self.disconnect((self.blocks_file_source_0_0, 0), (self.blocks_interleaved_char_to_complex_0, 0))
+        self.blocks_file_source_0_0.close()
+        self.blocks_file_source_0_0 = blocks.file_source(gr.sizeof_char*1, fileLocation, False, 0, 0)
+        self.blocks_file_source_0_0.set_begin_tag(pmt.PMT_NIL)
+
+        self.connect((self.blocks_file_source_0_0, 0), (self.blocks_copy_0, 0))
+        self.connect((self.blocks_file_source_0_0, 0), (self.blocks_interleaved_char_to_complex_0, 0))
+
+
+        #################################Copy into set_payload_chosen_constellation for Tx###########################
+        self.disconnect((self.blocks_copy_0, 0), (self.build_packet_new_0_0, 0))
+        self.disconnect((self.build_packet_new_0_0, 0), (self.blocks_multiply_const_vxx_0_0, 0))
+        self.build_packet_new_0_0 = build_packet_new(
+            divide=1,
+            header_constell=digital.constellation_bpsk(),
+            payload_constell=payload_chosen_constellation,
+            samp_rate=self.samp_rate,
+        )
+        self.connect((self.blocks_copy_0, 0), (self.build_packet_new_0_0, 0))
+        self.connect((self.build_packet_new_0_0, 0), (self.blocks_multiply_const_vxx_0_0, 0))
+
+
+        ###########################Copy into set_payload_chosen_constellation for Tx##############################
+        self.disconnect((self.blocks_copy_0, 0), (self.deconstruct_packets_new_0, 0))
+        self.disconnect((self.deconstruct_packets_new_0, 0), (self.blocks_file_sink_0, 0))
+        self.disconnect((self.deconstruct_packets_new_0, 0), (self.blocks_interleaved_char_to_complex_0, 0))
+
+        self.deconstruct_packets_new_0 = deconstruct_packets_new(
+            header_mod=digital.constellation_bpsk(),
+            multiply=1/128,
+            payload_mod=payload_chosen_constellation,
+            samp_rate=self.samp_rate,
+        )
+
+        self.connect((self.blocks_copy_0, 0), (self.deconstruct_packets_new_0, 0))
+        self.connect((self.deconstruct_packets_new_0, 0), (self.blocks_file_sink_0, 0))
+        self.connect((self.deconstruct_packets_new_0, 0), (self.blocks_interleaved_char_to_complex_0, 0))
+
+

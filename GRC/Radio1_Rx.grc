@@ -33,18 +33,6 @@ options:
     state: enabled
 
 blocks:
-- name: file
-  id: variable
-  parameters:
-    comment: ''
-    value: '"/home/ryan/Documents/Tests/output.txt"'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [336, 12.0]
-    rotation: 0
-    state: enabled
 - name: payload_chosen_constellation
   id: variable_constellation
   parameters:
@@ -72,6 +60,25 @@ blocks:
     coordinate: [176, 12.0]
     rotation: 0
     state: enabled
+- name: blocks_copy_0
+  id: blocks_copy
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    enabled: 'False'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    showports: 'False'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [360, 452.0]
+    rotation: 0
+    state: true
 - name: blocks_file_sink_0
   id: blocks_file_sink
   parameters:
@@ -79,7 +86,7 @@ blocks:
     alias: ''
     append: 'False'
     comment: ''
-    file: /home/ryan/Documents/Tests/output.mp3
+    file: /home/ryan/Documents/Tests/output.wav
     type: byte
     unbuffered: 'False'
     vlen: '1'
@@ -180,7 +187,7 @@ blocks:
     ant7: ''
     ant8: ''
     ant9: ''
-    args: hackrf=0000000000000000088869dc294cae1b
+    args: hackrf=0000000000000000f77c60dc235e53c3
     bb_gain0: rxBB
     bb_gain1: '20'
     bb_gain10: '20'
@@ -497,7 +504,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [248, 356.0]
+    coordinate: [72, 356.0]
     rotation: 0
     state: enabled
 - name: qtgui_freq_sink_x_0_0
@@ -531,7 +538,7 @@ blocks:
     color9: '"dark green"'
     comment: ''
     ctrlpanel: 'False'
-    fc: '0'
+    fc: freq
     fftsize: '1024'
     freqhalf: 'True'
     grid: 'False'
@@ -745,11 +752,12 @@ blocks:
     state: true
 
 connections:
+- [blocks_copy_0, '0', deconstruct_packets_new_0, '0']
+- [blocks_copy_0, '0', qtgui_freq_sink_x_0_0, '0']
 - [blocks_interleaved_char_to_complex_0, '0', qtgui_time_sink_x_0_2, '0']
 - [deconstruct_packets_new_0, '0', blocks_file_sink_0, '0']
 - [deconstruct_packets_new_0, '0', blocks_interleaved_char_to_complex_0, '0']
-- [osmosdr_source_0_1, '0', deconstruct_packets_new_0, '0']
-- [osmosdr_source_0_1, '0', qtgui_freq_sink_x_0_0, '0']
+- [osmosdr_source_0_1, '0', blocks_copy_0, '0']
 
 metadata:
   file_format: 1

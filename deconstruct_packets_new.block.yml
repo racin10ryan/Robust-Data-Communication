@@ -48,7 +48,8 @@ templates:
 
 documentation: 'Ryan
 
-    /media/ryan/New Volume/Senior Design/Backup/deconstruct_packets_new.py'
-grc_source: /media/ryan/New Volume/Senior Design/Backup/deconstruct_packets_FEC_New.grc
+    /media/ryan/New Volume/Senior Design/Main Program - Version 1.0/Original GRC/deconstruct_packets_new.py'
+grc_source: /media/ryan/New Volume/Senior Design/Main Program - Version 1.0/Original
+    GRC/deconstruct_packets_FEC_New.grc
 
 file_format: 1

@@ -44,7 +44,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1160, 44.0]
+    coordinate: [1256, 4.0]
     rotation: 0
     state: enabled
 - name: fft_len
@@ -56,7 +56,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [865, 10]
+    coordinate: [792, 20.0]
     rotation: 0
     state: enabled
 - name: header_format
@@ -68,7 +68,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [474, 23]
+    coordinate: [552, 108.0]
     rotation: 0
     state: enabled
 - name: ldpc_enc_H
@@ -84,7 +84,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1400, 60.0]
+    coordinate: [1152, 92.0]
     rotation: 0
     state: enabled
 - name: length_tag_key
@@ -96,7 +96,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [346, 25]
+    coordinate: [664, 20.0]
     rotation: 0
     state: enabled
 - name: occupied_carriers
@@ -109,7 +109,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [865, 81]
+    coordinate: [736, 108.0]
     rotation: 0
     state: enabled
 - name: packet_len
@@ -121,7 +121,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [223, 118]
+    coordinate: [552, 20.0]
     rotation: 0
     state: enabled
 - name: pilot_carriers
@@ -133,7 +133,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [866, 146]
+    coordinate: [960, 20.0]
     rotation: 0
     state: enabled
 - name: pilot_symbols
@@ -145,7 +145,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1021, 150]
+    coordinate: [896, 108.0]
     rotation: 0
     state: enabled
 - name: rolloff
@@ -157,7 +157,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [946, 9]
+    coordinate: [880, 20.0]
     rotation: 0
     state: enabled
 - name: sync_word1
@@ -174,7 +174,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1347, 209]
+    coordinate: [1096, 20.0]
     rotation: 0
     state: enabled
 - name: sync_word2
@@ -188,26 +188,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1494, 220]
+    coordinate: [1008, 108.0]
     rotation: 0
     state: enabled
-- name: blocks_message_strobe_0
-  id: blocks_message_strobe
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    msg: digital.constellation_bpsk().points()
-    period: '1000'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [284, 678]
-    rotation: 0
-    state: disabled
 - name: blocks_multiply_const_vxx_1
   id: blocks_multiply_const_vxx
   parameters:
@@ -223,7 +206,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1600, 540.0]
+    coordinate: [1096, 532.0]
     rotation: 0
     state: enabled
 - name: blocks_repack_bits_bb_0_0
@@ -243,7 +226,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [241, 486]
+    coordinate: [240, 436.0]
     rotation: 0
     state: enabled
 - name: blocks_repack_bits_bb_0_0_0
@@ -263,7 +246,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [238, 586]
+    coordinate: [232, 516.0]
     rotation: 0
     state: enabled
 - name: blocks_stream_to_tagged_stream_0
@@ -282,28 +265,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [296, 324.0]
+    coordinate: [352, 276.0]
     rotation: 0
     state: enabled
-- name: blocks_tag_gate_0
-  id: blocks_tag_gate
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    propagate_tags: 'False'
-    single_key: '""'
-    type: complex
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1224, 788.0]
-    rotation: 0
-    state: true
 - name: blocks_tagged_stream_mux_0
   id: blocks_tagged_stream_mux
   parameters:
@@ -321,47 +285,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1352, 528.0]
+    coordinate: [840, 480.0]
     rotation: 0
     state: enabled
-- name: blocks_throttle_0
-  id: blocks_throttle
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    ignoretag: 'True'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    samples_per_second: samp_rate
-    type: byte
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [96, 228.0]
-    rotation: 0
-    state: true
-- name: blocks_throttle_1
-  id: blocks_throttle
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    ignoretag: 'True'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    samples_per_second: samp_rate
-    type: complex
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1568, 772.0]
-    rotation: 0
-    state: true
 - name: blocks_unpack_k_bits_bb_0
   id: blocks_unpack_k_bits_bb
   parameters:
@@ -375,7 +301,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [200, 276.0]
+    coordinate: [176, 284.0]
     rotation: 0
     state: enabled
 - name: digital_chunks_to_symbols_xx_0_0
@@ -395,7 +321,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1056, 480.0]
+    coordinate: [560, 448.0]
     rotation: 0
     state: enabled
 - name: digital_chunks_to_symbols_xx_0_0_0
@@ -415,7 +341,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1056, 576.0]
+    coordinate: [568, 528.0]
     rotation: 0
     state: enabled
 - name: digital_crc32_bb_0
@@ -433,7 +359,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [560, 316.0]
+    coordinate: [616, 268.0]
     rotation: 0
     state: enabled
 - name: digital_ofdm_carrier_allocator_cvc_0
@@ -455,7 +381,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [279, 759]
+    coordinate: [248, 660.0]
     rotation: 0
     state: true
 - name: digital_ofdm_cyclic_prefixer_0
@@ -474,7 +400,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [829, 792]
+    coordinate: [800, 692.0]
     rotation: 0
     state: true
 - name: digital_protocol_formatter_bb_0
@@ -491,7 +417,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1088, 292.0]
+    coordinate: [1176, 276.0]
     rotation: 0
     state: enabled
 - name: divide
@@ -508,7 +434,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [408, 108.0]
+    coordinate: [192, 92.0]
     rotation: 0
     state: enabled
 - name: fec_extended_tagged_encoder_0_0
@@ -527,7 +453,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [784, 308.0]
+    coordinate: [880, 260.0]
     rotation: 0
     state: enabled
 - name: fft_vxx_0
@@ -548,7 +474,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [560, 775]
+    coordinate: [536, 676.0]
     rotation: 0
     state: true
 - name: header_constell
@@ -565,7 +491,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [661, 25]
+    coordinate: [352, 92.0]
     rotation: 0
     state: enabled
 - name: pad_sink_0
@@ -583,7 +509,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1768, 780.0]
+    coordinate: [1072, 708.0]
     rotation: 0
     state: enabled
 - name: pad_sink_1
@@ -601,7 +527,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1648, 388.0]
+    coordinate: [1088, 444.0]
     rotation: 0
     state: true
 - name: pad_sink_2
@@ -619,7 +545,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1840, 452.0]
+    coordinate: [1304, 532.0]
     rotation: 0
     state: true
 - name: pad_source_0
@@ -639,29 +565,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [16, 172.0]
+    coordinate: [16, 284.0]
     rotation: 0
     state: enabled
-- name: pad_source_1
-  id: pad_source
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    label: constellation
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    num_streams: '1'
-    optional: 'False'
-    type: message
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [50, 687]
-    rotation: 0
-    state: disabled
 - name: payload_constell
   id: parameter
   parameters:
@@ -676,7 +582,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [660, 116]
+    coordinate: [352, 12.0]
     rotation: 0
     state: enabled
 - name: samp_rate
@@ -693,7 +599,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [217, 20]
+    coordinate: [192, 12.0]
     rotation: 0
     state: true
 - name: virtual_sink_0
@@ -706,7 +612,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1384, 323]
+    coordinate: [1440, 284.0]
     rotation: 0
     state: enabled
 - name: virtual_sink_0_0
@@ -719,7 +625,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1088, 412.0]
+    coordinate: [1176, 364.0]
     rotation: 0
     state: enabled
 - name: virtual_sink_1
@@ -732,7 +638,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1792, 540.0]
+    coordinate: [1264, 436.0]
     rotation: 0
     state: true
 - name: virtual_source_0
@@ -745,7 +651,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [32, 493]
+    coordinate: [8, 444.0]
     rotation: 0
     state: enabled
 - name: virtual_source_1
@@ -758,7 +664,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [31, 594]
+    coordinate: [8, 524.0]
     rotation: 0
     state: enabled
 - name: virtual_source_2
@@ -771,35 +677,29 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [40, 852.0]
+    coordinate: [8, 708.0]
     rotation: 0
     state: true
 
 connections:
-- [blocks_message_strobe_0, strobe, digital_chunks_to_symbols_xx_0_0, set_symbol_table]
-- [blocks_message_strobe_0, strobe, digital_chunks_to_symbols_xx_0_0_0, set_symbol_table]
 - [blocks_multiply_const_vxx_1, '0', pad_sink_2, '0']
 - [blocks_multiply_const_vxx_1, '0', virtual_sink_1, '0']
 - [blocks_repack_bits_bb_0_0, '0', digital_chunks_to_symbols_xx_0_0, '0']
 - [blocks_repack_bits_bb_0_0_0, '0', digital_chunks_to_symbols_xx_0_0_0, '0']
 - [blocks_stream_to_tagged_stream_0, '0', digital_crc32_bb_0, '0']
-- [blocks_tag_gate_0, '0', blocks_throttle_1, '0']
 - [blocks_tagged_stream_mux_0, '0', blocks_multiply_const_vxx_1, '0']
 - [blocks_tagged_stream_mux_0, '0', pad_sink_1, '0']
-- [blocks_throttle_0, '0', blocks_unpack_k_bits_bb_0, '0']
-- [blocks_throttle_1, '0', pad_sink_0, '0']
 - [blocks_unpack_k_bits_bb_0, '0', blocks_stream_to_tagged_stream_0, '0']
 - [digital_chunks_to_symbols_xx_0_0, '0', blocks_tagged_stream_mux_0, '0']
 - [digital_chunks_to_symbols_xx_0_0_0, '0', blocks_tagged_stream_mux_0, '1']
 - [digital_crc32_bb_0, '0', fec_extended_tagged_encoder_0_0, '0']
 - [digital_ofdm_carrier_allocator_cvc_0, '0', fft_vxx_0, '0']
-- [digital_ofdm_cyclic_prefixer_0, '0', blocks_tag_gate_0, '0']
+- [digital_ofdm_cyclic_prefixer_0, '0', pad_sink_0, '0']
 - [digital_protocol_formatter_bb_0, '0', virtual_sink_0, '0']
 - [fec_extended_tagged_encoder_0_0, '0', digital_protocol_formatter_bb_0, '0']
 - [fec_extended_tagged_encoder_0_0, '0', virtual_sink_0_0, '0']
 - [fft_vxx_0, '0', digital_ofdm_cyclic_prefixer_0, '0']
-- [pad_source_0, '0', blocks_throttle_0, '0']
-- [pad_source_1, out, blocks_message_strobe_0, set_msg]
+- [pad_source_0, '0', blocks_unpack_k_bits_bb_0, '0']
 - [virtual_source_0, '0', blocks_repack_bits_bb_0_0, '0']
 - [virtual_source_1, '0', blocks_repack_bits_bb_0_0_0, '0']
 - [virtual_source_2, '0', digital_ofdm_carrier_allocator_cvc_0, '0']

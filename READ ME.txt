@@ -1,14 +1,23 @@
 Progress: 	
-	- Working control through XMLR-PC
+	- Full control of radios with XMLRPC
 
 Known Bugs: 		
-	- Tx missing length for Protocol Formatter
-	
+	- Amplifications are not. Will have to figure them out and update
 
+Bugs Fixed:
+	- Missing length tag when Tx was stopped then started again
+		FIX:Copy Block added and set to disable by default. Enable when
+		file is loaded  
+	- Hackrf One radio would freeze when it was assigned to be the Tx, 
+	  the flowgraph was stopped, then started again.
+		FIX: Updated HackRF firmware and libhackrf
+	- Constellation did not change correctly
+		FIX: When radio is stopped, the build/deconstruct packet functions
+		are disconnected,regenerated, then connected
+	- No transmission when setting the radio to 915 MHz
+		FIX: The constant for 915MHz was incorrect. Changed constant from
+		9.15e6 to 915e6
 To Do: 
-	- Need to find amplifications settings for different Frequencies and Constellations
-	  Currently only 915 MHz with BPSK is working to my knowledge. (This is why program
-	  always selects this frequency and constellation.
 	- Implement packetizer
 	- Implement ZMQ
 	- Develope and implement decision algorithms (While there is a

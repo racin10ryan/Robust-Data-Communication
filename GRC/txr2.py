@@ -25,15 +25,17 @@ import os
 import sys
 sys.path.append(os.environ.get('GRC_HIER_PATH', os.path.expanduser('~/.grc_gnuradio')))
 
+from PyQt5 import Qt
+from gnuradio import qtgui
+from gnuradio.filter import firdes
+import sip
 from build_packet_new import build_packet_new  # grc-generated hier_block
 from gnuradio import blocks
 import pmt
 from gnuradio import digital
 from gnuradio import gr
-from gnuradio.filter import firdes
 from gnuradio.fft import window
 import signal
-from PyQt5 import Qt
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
@@ -48,7 +50,7 @@ from gnuradio import qtgui
 
 class txr2(gr.top_block, Qt.QWidget):
 
-    def __init__(self, file="/home/ryan/Documents/Tests/input.txt", freq=915e6, samp_rate=2e6, transmit_divider=1/10):
+    def __init__(self, freq=915e6, samp_rate=2e6, transmit_divider=1/10):
         gr.top_block.__init__(self, "Tx_R2", catch_exceptions=True)
         Qt.QWidget.__init__(self)
         self.setWindowTitle("Tx_R2")
@@ -82,7 +84,6 @@ class txr2(gr.top_block, Qt.QWidget):
         ##################################################
         # Parameters
         ##################################################
-        self.file = file
         self.freq = freq
         self.samp_rate = samp_rate
         self.transmit_divider = transmit_divider
@@ -100,8 +101,110 @@ class txr2(gr.top_block, Qt.QWidget):
         self.xmlrpc_server_0_thread = threading.Thread(target=self.xmlrpc_server_0.serve_forever)
         self.xmlrpc_server_0_thread.daemon = True
         self.xmlrpc_server_0_thread.start()
+        self.qtgui_time_sink_x_0_2_0 = qtgui.time_sink_c(
+            1024, #size
+            samp_rate, #samp_rate
+            'File Source Time', #name
+            1, #number of inputs
+            None # parent
+        )
+        self.qtgui_time_sink_x_0_2_0.set_update_time(0.10)
+        self.qtgui_time_sink_x_0_2_0.set_y_axis(-1, 1)
+
+        self.qtgui_time_sink_x_0_2_0.set_y_label('Amplitude', "")
+
+        self.qtgui_time_sink_x_0_2_0.enable_tags(True)
+        self.qtgui_time_sink_x_0_2_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, 0, "")
+        self.qtgui_time_sink_x_0_2_0.enable_autoscale(False)
+        self.qtgui_time_sink_x_0_2_0.enable_grid(False)
+        self.qtgui_time_sink_x_0_2_0.enable_axis_labels(True)
+        self.qtgui_time_sink_x_0_2_0.enable_control_panel(False)
+        self.qtgui_time_sink_x_0_2_0.enable_stem_plot(False)
+
+
+        labels = ['Signal 1', 'Signal 2', 'Signal 3', 'Signal 4', 'Signal 5',
+            'Signal 6', 'Signal 7', 'Signal 8', 'Signal 9', 'Signal 10']
+        widths = [1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1]
+        colors = ['blue', 'red', 'green', 'black', 'cyan',
+            'magenta', 'yellow', 'dark red', 'dark green', 'dark blue']
+        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
+            1.0, 1.0, 1.0, 1.0, 1.0]
+        styles = [1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1]
+        markers = [-1, -1, -1, -1, -1,
+            -1, -1, -1, -1, -1]
+
+
+        for i in range(2):
+            if len(labels[i]) == 0:
+                if (i % 2 == 0):
+                    self.qtgui_time_sink_x_0_2_0.set_line_label(i, "Re{{Data {0}}}".format(i/2))
+                else:
+                    self.qtgui_time_sink_x_0_2_0.set_line_label(i, "Im{{Data {0}}}".format(i/2))
+            else:
+                self.qtgui_time_sink_x_0_2_0.set_line_label(i, labels[i])
+            self.qtgui_time_sink_x_0_2_0.set_line_width(i, widths[i])
+            self.qtgui_time_sink_x_0_2_0.set_line_color(i, colors[i])
+            self.qtgui_time_sink_x_0_2_0.set_line_style(i, styles[i])
+            self.qtgui_time_sink_x_0_2_0.set_line_marker(i, markers[i])
+            self.qtgui_time_sink_x_0_2_0.set_line_alpha(i, alphas[i])
+
+        self._qtgui_time_sink_x_0_2_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0_2_0.qwidget(), Qt.QWidget)
+        self.top_layout.addWidget(self._qtgui_time_sink_x_0_2_0_win)
+        self.qtgui_time_sink_x_0_2 = qtgui.time_sink_c(
+            1024, #size
+            samp_rate, #samp_rate
+            'Transmit Time', #name
+            1, #number of inputs
+            None # parent
+        )
+        self.qtgui_time_sink_x_0_2.set_update_time(0.10)
+        self.qtgui_time_sink_x_0_2.set_y_axis(-1, 1)
+
+        self.qtgui_time_sink_x_0_2.set_y_label('Amplitude', "")
+
+        self.qtgui_time_sink_x_0_2.enable_tags(True)
+        self.qtgui_time_sink_x_0_2.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, 0, "")
+        self.qtgui_time_sink_x_0_2.enable_autoscale(False)
+        self.qtgui_time_sink_x_0_2.enable_grid(False)
+        self.qtgui_time_sink_x_0_2.enable_axis_labels(True)
+        self.qtgui_time_sink_x_0_2.enable_control_panel(False)
+        self.qtgui_time_sink_x_0_2.enable_stem_plot(False)
+
+
+        labels = ['Signal 1', 'Signal 2', 'Signal 3', 'Signal 4', 'Signal 5',
+            'Signal 6', 'Signal 7', 'Signal 8', 'Signal 9', 'Signal 10']
+        widths = [1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1]
+        colors = ['blue', 'red', 'green', 'black', 'cyan',
+            'magenta', 'yellow', 'dark red', 'dark green', 'dark blue']
+        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
+            1.0, 1.0, 1.0, 1.0, 1.0]
+        styles = [1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1]
+        markers = [-1, -1, -1, -1, -1,
+            -1, -1, -1, -1, -1]
+
+
+        for i in range(2):
+            if len(labels[i]) == 0:
+                if (i % 2 == 0):
+                    self.qtgui_time_sink_x_0_2.set_line_label(i, "Re{{Data {0}}}".format(i/2))
+                else:
+                    self.qtgui_time_sink_x_0_2.set_line_label(i, "Im{{Data {0}}}".format(i/2))
+            else:
+                self.qtgui_time_sink_x_0_2.set_line_label(i, labels[i])
+            self.qtgui_time_sink_x_0_2.set_line_width(i, widths[i])
+            self.qtgui_time_sink_x_0_2.set_line_color(i, colors[i])
+            self.qtgui_time_sink_x_0_2.set_line_style(i, styles[i])
+            self.qtgui_time_sink_x_0_2.set_line_marker(i, markers[i])
+            self.qtgui_time_sink_x_0_2.set_line_alpha(i, alphas[i])
+
+        self._qtgui_time_sink_x_0_2_win = sip.wrapinstance(self.qtgui_time_sink_x_0_2.qwidget(), Qt.QWidget)
+        self.top_layout.addWidget(self._qtgui_time_sink_x_0_2_win)
         self.osmosdr_sink_0_1 = osmosdr.sink(
-            args="numchan=" + str(1) + " " + 'hackrf=0000000000000000f77c60dc235e53c3'
+            args="numchan=" + str(1) + " " + 'hackrf=0000000000000000088869dc294cae1b'
         )
         self.osmosdr_sink_0_1.set_time_now(osmosdr.time_spec_t(time.time()), osmosdr.ALL_MBOARDS)
         self.osmosdr_sink_0_1.set_sample_rate(samp_rate)
@@ -119,15 +222,22 @@ class txr2(gr.top_block, Qt.QWidget):
             samp_rate=samp_rate,
         )
         self.blocks_multiply_const_vxx_0_0 = blocks.multiply_const_cc(transmit_divider)
-        self.blocks_file_source_0_0 = blocks.file_source(gr.sizeof_char*1, '/home/ryan/Documents/Tests/input.mp3', False, 0, 0)
+        self.blocks_interleaved_char_to_complex_0 = blocks.interleaved_char_to_complex(False,1.0)
+        self.blocks_file_source_0_0 = blocks.file_source(gr.sizeof_char*1, '/home/ryan/Documents/Tests/StarWars60.wav', False, 0, 0)
         self.blocks_file_source_0_0.set_begin_tag(pmt.PMT_NIL)
+        self.blocks_copy_0 = blocks.copy(gr.sizeof_char*1)
+        self.blocks_copy_0.set_enabled(False)
 
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.blocks_file_source_0_0, 0), (self.build_packet_new_0_0, 0))
+        self.connect((self.blocks_copy_0, 0), (self.build_packet_new_0_0, 0))
+        self.connect((self.blocks_file_source_0_0, 0), (self.blocks_copy_0, 0))
+        self.connect((self.blocks_file_source_0_0, 0), (self.blocks_interleaved_char_to_complex_0, 0))
+        self.connect((self.blocks_interleaved_char_to_complex_0, 0), (self.qtgui_time_sink_x_0_2_0, 0))
         self.connect((self.blocks_multiply_const_vxx_0_0, 0), (self.osmosdr_sink_0_1, 0))
+        self.connect((self.blocks_multiply_const_vxx_0_0, 0), (self.qtgui_time_sink_x_0_2, 0))
         self.connect((self.build_packet_new_0_0, 0), (self.blocks_multiply_const_vxx_0_0, 0))
 
 
@@ -138,12 +248,6 @@ class txr2(gr.top_block, Qt.QWidget):
         self.wait()
 
         event.accept()
-
-    def get_file(self):
-        return self.file
-
-    def set_file(self, file):
-        self.file = file
 
     def get_freq(self):
         return self.freq
@@ -160,6 +264,8 @@ class txr2(gr.top_block, Qt.QWidget):
         self.build_packet_new_0_0.set_samp_rate(self.samp_rate)
         self.osmosdr_sink_0_1.set_sample_rate(self.samp_rate)
         self.osmosdr_sink_0_1.set_bandwidth(self.samp_rate, 0)
+        self.qtgui_time_sink_x_0_2.set_samp_rate(self.samp_rate)
+        self.qtgui_time_sink_x_0_2_0.set_samp_rate(self.samp_rate)
 
     def get_transmit_divider(self):
         return self.transmit_divider
@@ -179,9 +285,6 @@ class txr2(gr.top_block, Qt.QWidget):
 
 def argument_parser():
     parser = ArgumentParser()
-    parser.add_argument(
-        "--file", dest="file", type=str, default="/home/ryan/Documents/Tests/input.txt",
-        help="Set File [default=%(default)r]")
     parser.add_argument(
         "--freq", dest="freq", type=eng_float, default=eng_notation.num_to_str(float(915e6)),
         help="Set Frequency [default=%(default)r]")
@@ -203,7 +306,7 @@ def main(top_block_cls=txr2, options=None):
         Qt.QApplication.setGraphicsSystem(style)
     qapp = Qt.QApplication(sys.argv)
 
-    tb = top_block_cls(file=options.file, freq=options.freq, samp_rate=options.samp_rate, transmit_divider=options.transmit_divider)
+    tb = top_block_cls(freq=options.freq, samp_rate=options.samp_rate, transmit_divider=options.transmit_divider)
 
     tb.start()
 

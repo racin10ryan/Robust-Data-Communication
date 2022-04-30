@@ -23,6 +23,11 @@ parameters:
     dtype: raw
     default: '20000000'
     hide: none
+-   id: thresh
+    label: Threshold
+    dtype: raw
+    default: '0.915'
+    hide: none
 
 inputs:
 -   label: in
@@ -39,17 +44,18 @@ templates:
         hier_block'
     make: "deconstruct_packets_new(\n    header_mod=${ header_mod },\n    multiply=${\
         \ multiply },\n    payload_mod=${ payload_mod },\n    samp_rate=${ samp_rate\
-        \ },\n)"
+        \ },\n    thresh=${ thresh },\n)"
     callbacks:
     - set_header_mod(${ header_mod })
     - set_multiply(${ multiply })
     - set_payload_mod(${ payload_mod })
     - set_samp_rate(${ samp_rate })
+    - set_thresh(${ thresh })
 
 documentation: 'Ryan
 
-    /media/ryan/New Volume/Senior Design/Main Program - Version 1.0/Original GRC/deconstruct_packets_new.py'
-grc_source: /media/ryan/New Volume/Senior Design/Main Program - Version 1.0/Original
+    /media/ryan/New Volume/Senior Design/Main Program - Version 1.1/Original GRC/deconstruct_packets_new.py'
+grc_source: /media/ryan/New Volume/Senior Design/Main Program - Version 1.1/Original
     GRC/deconstruct_packets_FEC_New.grc
 
 file_format: 1

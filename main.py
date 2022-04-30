@@ -10,7 +10,7 @@ from gnuradio import digital
 import tkinter as tk
 from tkinter import filedialog
 
-tempFreqVariable = "LOW"
+tempFreqVariable = "MID"
 tempConstellVariable = "BPSK"
 
 
@@ -27,18 +27,18 @@ class Control():
 
 
     ##################################### frequencies #####################################
-    lowband = 9.15e6
+    lowband = 915e6
     midband = 2.45e9
     highband = 5.85e9
 
     #################################### amplification ####################################
     ############################## lowband ##############################
     ################## BPSK ##################
-    lbTXbpsk = 1/50
-    lbIFbpsk = 47
-    lbBBbpsk = 25
+    lbTXbpsk = 1/10
+    lbIFbpsk = 40
+    lbBBbpsk = 20
     ################## QPSK ##################
-    lbTXqpsk = 1/50
+    lbTXqpsk = 1/38
     lbIFqpsk = 47
     lbBBqpsk = 25
     ################# 16 QAM #################
@@ -62,15 +62,15 @@ class Control():
 
     ############################## highband ##############################
     ################## BPSK ##################
-    hbTXbpsk = 1/50
-    hbIFbpsk = 47
-    hbBBbpsk = 25
+    hbTXbpsk = 1/10
+    hbIFbpsk = 40
+    hbBBbpsk = 0
     ################## QPSK ##################
-    hbTXqpsk = 1/50
-    hbIFqpsk = 47
-    hbBBqpsk = 25
+    hbTXqpsk = 1/10
+    hbIFqpsk = 40
+    hbBBqpsk = 0
     ################# 16 QAM #################
-    hbTXstQAM = 1/50
+    hbTXstQAM = 1/20
     hbIFstQAM = 47
     hbBBstQAM = 25
     #######################################################################################################
@@ -93,14 +93,14 @@ class Control():
 
     ######################################### Function Defintions #########################################
     def __init__(self):
-        self.constellationDecision = self.bpsk
+        self.constellationDecision = "BPSK"
         self.frequencyDecision = self.lowband
         self.transmitDivider = self.lbTXbpsk
         self.receiverIFgain = self.lbIFbpsk
         self.receiverBBgain = self.lbBBbpsk
         self.setRadio("RD1","RX")
         self.setRadio("RD2","RX")
-
+        self.startRadios("RD1","RX")
 
 
     ################################### XMLR Functions ###################################
@@ -117,7 +117,7 @@ class Control():
         print("Configuring R1's Constellation...")
         self.currentRd1.changeConstellations(self.constellationDecision)
         #Change Radio w's  Constellation
-        print("Configuring R12's Constellation...")
+        print("Configuring R2's Constellation...")
         self.currentRd2.changeConstellations(self.constellationDecision)
 	
     def changeAmp(self):
@@ -134,18 +134,26 @@ class Control():
 			
     def changeFile(self):
         self.txORrx(self)
+        print(self.fileLocation)
         print("Loading File...")
-        self.currentTx.set_file(fileLocation)
+        print(self.fileLocation)
+        print("Calling Configure....")
+        self.currentTx.configureFile(self.fileLocation)
 
     def startRadios(self):
         #start radios
         print("Staring Radios...")
         time.sleep(3)
         self.txORrx(self)
+
+        self.currentRd1.enableFlow(True)
+        self.currentRd2.enableFlow(True)
         if self.currentTx != None and self.currentRx !=None:
+            print("Staring Rx for Transmission...")
             self.currentRx.start()
             time.sleep(3)
-            self.currentTx.restart()
+            print("Staring Tx for Transmission...")
+            self.currentTx.start()
         else:
             self.currentRd1.start()
             self.currentRd2.start()
@@ -250,7 +258,7 @@ class Control():
             elif radioType == "RX":
                 self.currentRd1 = self.rd1Rx
                 xmlrControl = self.rd1Rx
-                self.serverRd1=subprocess.Popen('python rx1.py', shell=True)
+                self.serverRd1=subprocess.Popen('python rxr1.py', shell=True)
         elif radioVariable == "RD2":
             if self.serverRd2 != None:
                 self.serverKill(self.serverRd2)
@@ -271,12 +279,16 @@ class Control():
 
     def configureRadios(self):
         #configure the radio before transmission
+        self.currentRd1.lock()
+        self.currentRd2.lock()
         self.selectFreq(self, tempFreqVariable)
         self.selectConstell(self,tempConstellVariable)
         self.changeFreq(self)
         self.changeConstell(self)
         self.changeAmp(self)
         self.changeFile(self)
+        self.currentRd1.unlock()
+        self.currentRd2.unlock()
 
 
     def txORrx(self):
@@ -289,7 +301,7 @@ class Control():
         elif self.currentRd1 == self.rd1Rx:
             self.currentRx = self.rd1Rx
         if self.currentRd2 == self.rd2Tx:
-            self.currentTx = self.rd2Rx
+            self.currentTx = self.rd2Tx
         elif self.currentRd2 == self.rd2Rx:
             self.currentRx = self.rd2Rx
 
@@ -306,16 +318,15 @@ def main(top_block_cls=Control):
 
     ################################## GUI Functions ####################################
     def browseFiles():
-        global fileLocation
         # Open File Explorer
-        fileLocation = filedialog.askopenfilename(initialdir="/",title="Select a File", 
+        ct.fileLocation = filedialog.askopenfilename(initialdir="/",title="Select a File", 
         filetypes=(("Text files", "*.txt*"),("all files", "*.*")))
 	    # Change label contents
-        label_file_explorer.configure(text="File Opened: "+fileLocation)
+        label_file_explorer.configure(text="File Opened: "+ct.fileLocation)
 
     def rd1Tord2():
         # If there is a selected file
-        if fileLocation != "":
+        if ct.fileLocation != "":
             ct.setRadio(ct,"RD1","TX")
             ct.setRadio(ct,"RD2","RX")
             ct.configureRadios(ct)
@@ -326,9 +337,9 @@ def main(top_block_cls=Control):
 	
     def rd2Tord1():
         # If there is a selected file
-        if fileLocation != "":
-            ct.setRadio(ct,"RD1","TX")
-            ct.setRadio(ct,"RD2","RX")
+        if ct.fileLocation != "":
+            ct.setRadio(ct,"RD1","RX")
+            ct.setRadio(ct,"RD2","TX")
             ct.configureRadios(ct)
             ct.startRadios(ct)
         # If no file is selected

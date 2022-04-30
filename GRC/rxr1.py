@@ -92,7 +92,6 @@ class rxr1(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
         self.payload_chosen_constellation = payload_chosen_constellation = digital.constellation_bpsk().base()
-        self.file = file = "/home/ryan/Documents/Tests/output.txt"
 
         ##################################################
         # Blocks
@@ -156,7 +155,7 @@ class rxr1(gr.top_block, Qt.QWidget):
         self.qtgui_freq_sink_x_0_0 = qtgui.freq_sink_c(
             1024, #size
             window.WIN_BLACKMAN_hARRIS, #wintype
-            0, #fc
+            freq, #fc
             samp_rate, #bw
             'Receiver Freqency ', #name
             1,
@@ -196,7 +195,7 @@ class rxr1(gr.top_block, Qt.QWidget):
         self._qtgui_freq_sink_x_0_0_win = sip.wrapinstance(self.qtgui_freq_sink_x_0_0.qwidget(), Qt.QWidget)
         self.top_layout.addWidget(self._qtgui_freq_sink_x_0_0_win)
         self.osmosdr_source_0_1 = osmosdr.source(
-            args="numchan=" + str(1) + " " + 'hackrf=0000000000000000088869dc294cae1b'
+            args="numchan=" + str(1) + " " + 'hackrf=0000000000000000f77c60dc235e53c3'
         )
         self.osmosdr_source_0_1.set_time_now(osmosdr.time_spec_t(time.time()), osmosdr.ALL_MBOARDS)
         self.osmosdr_source_0_1.set_sample_rate(samp_rate)
@@ -215,20 +214,24 @@ class rxr1(gr.top_block, Qt.QWidget):
             multiply=1/128,
             payload_mod=payload_chosen_constellation,
             samp_rate=samp_rate,
+            thresh=0.915,
         )
         self.blocks_interleaved_char_to_complex_0 = blocks.interleaved_char_to_complex(False,1.0)
-        self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_char*1, '/home/ryan/Documents/Tests/output.mp3', False)
+        self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_char*1, '/home/ryan/Documents/Tests/output.wav', False)
         self.blocks_file_sink_0.set_unbuffered(False)
+        self.blocks_copy_0 = blocks.copy(gr.sizeof_gr_complex*1)
+        self.blocks_copy_0.set_enabled(False)
 
 
         ##################################################
         # Connections
         ##################################################
+        self.connect((self.blocks_copy_0, 0), (self.deconstruct_packets_new_0, 0))
+        self.connect((self.blocks_copy_0, 0), (self.qtgui_freq_sink_x_0_0, 0))
         self.connect((self.blocks_interleaved_char_to_complex_0, 0), (self.qtgui_time_sink_x_0_2, 0))
         self.connect((self.deconstruct_packets_new_0, 0), (self.blocks_file_sink_0, 0))
         self.connect((self.deconstruct_packets_new_0, 0), (self.blocks_interleaved_char_to_complex_0, 0))
-        self.connect((self.osmosdr_source_0_1, 0), (self.deconstruct_packets_new_0, 0))
-        self.connect((self.osmosdr_source_0_1, 0), (self.qtgui_freq_sink_x_0_0, 0))
+        self.connect((self.osmosdr_source_0_1, 0), (self.blocks_copy_0, 0))
 
 
     def closeEvent(self, event):
@@ -245,6 +248,7 @@ class rxr1(gr.top_block, Qt.QWidget):
     def set_freq(self, freq):
         self.freq = freq
         self.osmosdr_source_0_1.set_center_freq(self.freq, 0)
+        self.qtgui_freq_sink_x_0_0.set_frequency_range(self.freq, self.samp_rate)
 
     def get_rxBB(self):
         return self.rxBB
@@ -268,7 +272,7 @@ class rxr1(gr.top_block, Qt.QWidget):
         self.deconstruct_packets_new_0.set_samp_rate(self.samp_rate)
         self.osmosdr_source_0_1.set_sample_rate(self.samp_rate)
         self.osmosdr_source_0_1.set_bandwidth(self.samp_rate, 0)
-        self.qtgui_freq_sink_x_0_0.set_frequency_range(0, self.samp_rate)
+        self.qtgui_freq_sink_x_0_0.set_frequency_range(self.freq, self.samp_rate)
         self.qtgui_time_sink_x_0_2.set_samp_rate(self.samp_rate)
 
     def get_payload_chosen_constellation(self):
@@ -277,12 +281,6 @@ class rxr1(gr.top_block, Qt.QWidget):
     def set_payload_chosen_constellation(self, payload_chosen_constellation):
         self.payload_chosen_constellation = payload_chosen_constellation
         self.deconstruct_packets_new_0.set_payload_mod(self.payload_chosen_constellation)
-
-    def get_file(self):
-        return self.file
-
-    def set_file(self, file):
-        self.file = file
 
 
 
