@@ -26,11 +26,11 @@ def packetize(inputlocation,outputlocation):
     # TODO: calculate chunk size by filesize, determine maximum file size to be sent.
     
     splitter = splitit.Split(inputpath, inputpath.parent)
-    splitter.bysize(1024)
+    splitter.bysize(int(os.path.getsize(inputlocation)/199))
     
     # Create Preamble to protect packet during sychronization process.
 
-    preamble_arr = np.random.randint(2, 1000000)
+    preamble_arr = np.random.randint(2, 1000, size=5120, dtype=np.int32)
     preamble = bytes(preamble_arr)
 
     packet_arr = bytearray()
@@ -88,7 +88,7 @@ def packetize(inputlocation,outputlocation):
 
     # Protect final useful bytes of packet with postamble because GNUradio is hungry.
 
-    postamble_arr = np.random.randint(2, 100)
+    postamble_arr = np.random.randint(2, 1000, size=512, dtype=np.int32)
     postamble = bytes(postamble_arr)
     packet_arr.extend(postamble)
 
@@ -105,35 +105,16 @@ def retransmit(request_list, inputlocation, outputlocation):
 
     # input location is the location of the original chunks, output location is the location of packet.ddi
 
-    inputpath = pathlib.PurePath(inputlocation)
-    path = inputpath.parent
-    filename = inputpath.stem
-    file_ext = inputpath.suffix
+    if request_list[0] != 'manifest':
+        inputpath = pathlib.PurePath(inputlocation)
+        path = inputpath.parent
+        filename = inputpath.stem
+        file_ext = inputpath.suffix
 
-    packet_arr = bytearray()
-    preamble_arr = np.random.randint(2, 10000)
-    preamble = bytes(preamble_arr)
-    packet_arr.extend(preamble)
-
-    if request_list[0] == 'manifest':
-        # Create Preamble to protect packet during sychronization process.
-
-        mgkstr = 'Packet Start'
-        mgkstrbytes = bytes(mgkstr.encode())
-        packet_arr.extend(mgkstrbytes)
-
-
-        print("Writing manifest to packet...")
-
-        # Write manifest to packet for file chunk length and number information.
-        packet_arr.extend(mgkstrbytes)
-        with open(pathlib.PurePath(path, 'manifest'), mode = 'rb') as file_to_read:
-            file_bytes = bytes(file_to_read.read())
-            packet_arr.extend(file_bytes)
-
-        # Write the requested files to packet
-
-    else:
+        packet_arr = bytearray()
+        preamble_arr = np.random.randint(2, 1000, size=5120, dtype=np.int32)
+        preamble = bytes(preamble_arr)
+        packet_arr.extend(preamble)
         for request in request_list:
 
             with open(pathlib.PurePath(path, '{filename}_{chunk_num}{file_ext}'.format(filename = filename, chunk_num = request, file_ext = file_ext)), mode = 'rb') as file_to_read:
@@ -148,24 +129,24 @@ def retransmit(request_list, inputlocation, outputlocation):
                 filend = "File {num} End".format(num = request)
                 filendbytes = bytes(filend.encode())
                 packet_arr.extend(filendbytes)
-        # Identify end of packet with string.
+            # Identify end of packet with string.
 
-        mgkstrtoo = 'Packet End'
-        mgkstrbytes = bytes(mgkstrtoo.encode())
-        packet_arr.extend(mgkstrbytes)
+            mgkstrtoo = 'Packet End'
+            mgkstrbytes = bytes(mgkstrtoo.encode())
+            packet_arr.extend(mgkstrbytes)
 
-        # Protect final useful bytes of packet with postamble because GNUradio is hungry.
+            # Protect final useful bytes of packet with postamble because GNUradio is hungry.
 
-        postamble_arr = np.random.randint(2, 100)
-        postamble = bytes(postamble_arr)
-        packet_arr.extend(postamble)
+            postamble_arr = np.random.randint(2, 1000, size=512, dtype=np.int32)
+            postamble = bytes(postamble_arr)
+            packet_arr.extend(postamble)
 
-        packed_bytes = bytes(packet_arr)
+            packed_bytes = bytes(packet_arr)
 
-        print("Saving packet.ddi...")
+            print("Saving packet.ddi...")
 
-        with open(pathlib.PurePath(outputlocation, 'packet.ddi'), mode = 'wb') as file_to_write:
-            file_to_write.write(packed_bytes)
+            with open(pathlib.PurePath(outputlocation, 'packet.ddi'), mode = 'wb') as file_to_write:
+                file_to_write.write(packed_bytes)
 
     return
 

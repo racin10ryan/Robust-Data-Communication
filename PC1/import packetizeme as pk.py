@@ -1,4 +1,3 @@
 import packetizeme 
 
-requestlist=packetizeme.depacketize('/media/ryan/New Volume/Senior Design/Working On/Received/received.ddi','/media/ryan/New Volume/Senior Design/Working On/Received/input.txt')
-print(requestlist)
+packetizeme.packetize('/home/ryan/Documents/Tests/input.txt','/home/ryan/Documents/Tests/')

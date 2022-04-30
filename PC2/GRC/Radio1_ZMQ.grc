@@ -28,7 +28,7 @@ options:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [8, 8]
+    coordinate: [16, 20.0]
     rotation: 0
     state: enabled
 
@@ -404,7 +404,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [432, 404.0]
+    coordinate: [152, 252.0]
     rotation: 0
     state: enabled
 - name: qtgui_freq_sink_x_0_0
@@ -485,7 +485,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [816, 324.0]
+    coordinate: [456, 220.0]
     rotation: 0
     state: enabled
 - name: rxBB
@@ -550,7 +550,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [24, 132.0]
+    coordinate: [16, 124.0]
     rotation: 0
     state: true
 - name: zeromq_pub_sink_0
@@ -570,7 +570,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [816, 524.0]
+    coordinate: [456, 380.0]
     rotation: 0
     state: true
 

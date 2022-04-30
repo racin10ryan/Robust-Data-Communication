@@ -9,7 +9,7 @@ options:
     description: ''
     gen_cmake: 'On'
     gen_linking: dynamic
-    generate_options: no_gui
+    generate_options: qt_gui
     hier_block_src_path: '.:'
     id: tx
     max_nouts: '0'
@@ -57,7 +57,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [632, 20.0]
+    coordinate: [584, 12.0]
     rotation: 0
     state: enabled
 - name: blocks_copy_0
@@ -66,7 +66,7 @@ blocks:
     affinity: ''
     alias: ''
     comment: ''
-    enabled: 'False'
+    enabled: 'True'
     maxoutbuf: '0'
     minoutbuf: '0'
     showports: 'False'
@@ -76,7 +76,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [344, 436.0]
+    coordinate: [304, 348.0]
     rotation: 0
     state: true
 - name: blocks_file_source_0_0
@@ -98,7 +98,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [32, 308.0]
+    coordinate: [24, 316.0]
     rotation: 0
     state: enabled
 - name: blocks_interleaved_char_to_complex_0
@@ -115,9 +115,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [328, 260.0]
+    coordinate: [288, 172.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: blocks_multiply_const_vxx_0_0
   id: blocks_multiply_const_vxx
   parameters:
@@ -133,29 +133,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [808, 404.0]
+    coordinate: [824, 316.0]
     rotation: 0
     state: enabled
-- name: blocks_vector_source_x_0
-  id: blocks_vector_source_x
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    repeat: 'True'
-    tags: '[]'
-    type: byte
-    vector: (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [24, 436.0]
-    rotation: 0
-    state: disabled
 - name: build_packet_new_0_0
   id: build_packet_new
   parameters:
@@ -172,7 +152,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [520, 408.0]
+    coordinate: [496, 320.0]
     rotation: 0
     state: enabled
 - name: freq
@@ -184,12 +164,12 @@ blocks:
     label: Frequency
     short_id: ''
     type: eng_float
-    value: 922e6
+    value: 908e6
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [360, 20.0]
+    coordinate: [312, 12.0]
     rotation: 0
     state: true
 - name: osmosdr_sink_0_1
@@ -450,9 +430,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1224, 372.0]
+    coordinate: [1096, 236.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: qtgui_freq_sink_x_0_0
   id: qtgui_freq_sink_x
   parameters:
@@ -531,9 +511,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1248, 676.0]
+    coordinate: [1136, 540.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: qtgui_time_sink_x_0_2
   id: qtgui_time_sink_x
   parameters:
@@ -549,7 +529,7 @@ blocks:
     alpha7: '1.0'
     alpha8: '1.0'
     alpha9: '1.0'
-    autoscale: 'False'
+    autoscale: 'True'
     axislabels: 'True'
     color1: blue
     color10: dark blue
@@ -628,9 +608,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1264, 572.0]
+    coordinate: [1160, 428.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: qtgui_time_sink_x_0_2_0
   id: qtgui_time_sink_x
   parameters:
@@ -725,9 +705,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [552, 244.0]
+    coordinate: [512, 156.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: samp_rate
   id: parameter
   parameters:
@@ -736,13 +716,13 @@ blocks:
     hide: none
     label: Sample Rate
     short_id: ''
-    type: eng_float
+    type: ''
     value: 2e6
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [232, 20.0]
+    coordinate: [184, 12.0]
     rotation: 0
     state: true
 - name: transmit_divider
@@ -754,12 +734,12 @@ blocks:
     label: Transmit Divider
     short_id: ''
     type: eng_float
-    value: 1/47
+    value: '1'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [480, 20.0]
+    coordinate: [432, 12.0]
     rotation: 0
     state: true
 - name: xmlrpc_server_0
@@ -773,7 +753,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [16, 124.0]
+    coordinate: [8, 116.0]
     rotation: 0
     state: true
 
@@ -785,8 +765,6 @@ connections:
 - [blocks_multiply_const_vxx_0_0, '0', osmosdr_sink_0_1, '0']
 - [blocks_multiply_const_vxx_0_0, '0', qtgui_freq_sink_x_0_0, '0']
 - [blocks_multiply_const_vxx_0_0, '0', qtgui_time_sink_x_0_2, '0']
-- [blocks_vector_source_x_0, '0', blocks_copy_0, '0']
-- [blocks_vector_source_x_0, '0', blocks_interleaved_char_to_complex_0, '0']
 - [build_packet_new_0_0, '0', blocks_multiply_const_vxx_0_0, '0']
 
 metadata:

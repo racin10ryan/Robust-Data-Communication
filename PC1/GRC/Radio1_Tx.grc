@@ -100,7 +100,7 @@ blocks:
     bus_structure: null
     coordinate: [32, 308.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: blocks_interleaved_char_to_complex_0
   id: blocks_interleaved_char_to_complex
   parameters:
@@ -136,26 +136,6 @@ blocks:
     coordinate: [832, 404.0]
     rotation: 0
     state: enabled
-- name: blocks_vector_source_x_0
-  id: blocks_vector_source_x
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    repeat: 'True'
-    tags: '[]'
-    type: byte
-    vector: (0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1)
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [96, 468.0]
-    rotation: 0
-    state: true
 - name: build_packet_new_0_0
   id: build_packet_new
   parameters:
@@ -184,7 +164,7 @@ blocks:
     label: Frequency
     short_id: ''
     type: eng_float
-    value: 922e6
+    value: 200e6
   states:
     bus_sink: false
     bus_source: false
@@ -803,8 +783,6 @@ connections:
 - [blocks_file_source_0_0, '0', blocks_interleaved_char_to_complex_0, '0']
 - [blocks_interleaved_char_to_complex_0, '0', qtgui_time_sink_x_0_2_0, '0']
 - [blocks_multiply_const_vxx_0_0, '0', rational_resampler_xxx_0, '0']
-- [blocks_vector_source_x_0, '0', blocks_copy_0, '0']
-- [blocks_vector_source_x_0, '0', blocks_interleaved_char_to_complex_0, '0']
 - [build_packet_new_0_0, '0', blocks_multiply_const_vxx_0_0, '0']
 - [rational_resampler_xxx_0, '0', osmosdr_sink_0_1, '0']
 - [rational_resampler_xxx_0, '0', qtgui_freq_sink_x_0_0, '0']

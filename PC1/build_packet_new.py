@@ -72,8 +72,6 @@ class build_packet_new(gr.hier_block2):
         self.digital_chunks_to_symbols_xx_0_0_0 = digital.chunks_to_symbols_bc(payload_constell.points(), 1)
         self.digital_chunks_to_symbols_xx_0_0 = digital.chunks_to_symbols_bc(header_constell.points(), 1)
         self.blocks_unpack_k_bits_bb_0 = blocks.unpack_k_bits_bb(8)
-        self.blocks_throttle_1 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate,True)
-        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_char*1, samp_rate,True)
         self.blocks_tagged_stream_mux_0 = blocks.tagged_stream_mux(gr.sizeof_gr_complex*1, length_tag_key, 0)
         self.blocks_stream_to_tagged_stream_0 = blocks.stream_to_tagged_stream(gr.sizeof_char, 1, packet_len, length_tag_key)
         self.blocks_repack_bits_bb_0_0_0 = blocks.repack_bits_bb(8, payload_constell.bits_per_symbol(), length_tag_key, False, gr.GR_LSB_FIRST)
@@ -91,19 +89,17 @@ class build_packet_new(gr.hier_block2):
         self.connect((self.blocks_stream_to_tagged_stream_0, 0), (self.digital_crc32_bb_0, 0))
         self.connect((self.blocks_tagged_stream_mux_0, 0), (self.blocks_multiply_const_vxx_1, 0))
         self.connect((self.blocks_tagged_stream_mux_0, 0), (self, 1))
-        self.connect((self.blocks_throttle_0, 0), (self.blocks_unpack_k_bits_bb_0, 0))
-        self.connect((self.blocks_throttle_1, 0), (self, 0))
         self.connect((self.blocks_unpack_k_bits_bb_0, 0), (self.blocks_stream_to_tagged_stream_0, 0))
         self.connect((self.digital_chunks_to_symbols_xx_0_0, 0), (self.blocks_tagged_stream_mux_0, 0))
         self.connect((self.digital_chunks_to_symbols_xx_0_0_0, 0), (self.blocks_tagged_stream_mux_0, 1))
         self.connect((self.digital_crc32_bb_0, 0), (self.fec_extended_tagged_encoder_0_0, 0))
         self.connect((self.digital_ofdm_carrier_allocator_cvc_0, 0), (self.fft_vxx_0, 0))
-        self.connect((self.digital_ofdm_cyclic_prefixer_0, 0), (self.blocks_throttle_1, 0))
+        self.connect((self.digital_ofdm_cyclic_prefixer_0, 0), (self, 0))
         self.connect((self.digital_protocol_formatter_bb_0, 0), (self.blocks_repack_bits_bb_0_0, 0))
         self.connect((self.fec_extended_tagged_encoder_0_0, 0), (self.blocks_repack_bits_bb_0_0_0, 0))
         self.connect((self.fec_extended_tagged_encoder_0_0, 0), (self.digital_protocol_formatter_bb_0, 0))
         self.connect((self.fft_vxx_0, 0), (self.digital_ofdm_cyclic_prefixer_0, 0))
-        self.connect((self, 0), (self.blocks_throttle_0, 0))
+        self.connect((self, 0), (self.blocks_unpack_k_bits_bb_0, 0))
 
 
     def get_divide(self):
@@ -130,8 +126,6 @@ class build_packet_new(gr.hier_block2):
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
-        self.blocks_throttle_0.set_sample_rate(self.samp_rate)
-        self.blocks_throttle_1.set_sample_rate(self.samp_rate)
 
     def get_occupied_carriers(self):
         return self.occupied_carriers

@@ -13,6 +13,8 @@ from tkinter import filedialog
 import zmq
 import numpy as np
 import threading
+import pathlib
+from filesplit.merge import Merge
 
 
 tempFreqVariable = "HIGH"
@@ -23,7 +25,8 @@ class Control():
     def __init__(self, constell="BPSK", freq=915.e6 ):
         ######################################### Create XMLRPC Server ########################################
         #Computer 1
-        self.server = SimpleXMLRPCServer(("localhost", 8006), allow_none=True)
+        self.server = SimpleXMLRPCServer(("192.168.254.37", 8006), allow_none=True)
+        #self.server = SimpleXMLRPCServer(("localhost", 8006), allow_none=True)
         #Computer 2
         #self.server = SimpleXMLRPCServer(("localhost", 8007)), allow_none=True)
         ################################## Register Functions #################################
@@ -36,7 +39,8 @@ class Control():
         self.Rx = ServerProxy('http://'+'localhost'+':8001')
         #Computer 1
         self.rdZMQ = ServerProxy('http://'+'localhost'+':8004')
-        self.other = ServerProxy('http://'+'localhost'+':8007')
+        self.other = ServerProxy('http://'+'192.168.254.133'+':8007')
+        #self.other = ServerProxy('http://'+'localhost'+':8007')
         #Computer 2
         #self.ZMQ = ServerProxy('http://'+'localhost'+':8005')
         #self.other = ServerProxy('http://'+'localhost'+':8006')
@@ -64,7 +68,7 @@ class Control():
         ############################## lowband ##############################
         ################## BPSK ##################
         self.lbTXbpsk = 1/50
-        self.lbRxThresh=915e-3
+        self.lbRxThresh=925e-3
         self.lbIFbpsk = 0
         self.lbBBbpsk = 0
         ################## QPSK ##################
@@ -78,8 +82,8 @@ class Control():
 
         ############################### midband  #############################
         ################## BPSK ##################
-        self.mbTXbpsk = 1/47
-        self.mbRxThresh=915e-3
+        self.mbTXbpsk = 1/50
+        self.mbRxThresh=925e-3
         self.mbIFbpsk = 0
         self.mbBBbpsk =0
         ###### QPSK ######
@@ -94,7 +98,7 @@ class Control():
         ############################## highband ##############################
         ################## BPSK ##################
         self.hbTXbpsk = 1/47
-        self.hbRxThresh=920e-3
+        self.hbRxThresh=.94
         self.hbIFbpsk = 0
         self.hbBBbpsk = 0
         ################## QPSK ##################
@@ -320,11 +324,12 @@ class Control():
         if _debug:
             print("STARTING XMLR SERVER")                    
             print("If there is another server open...")
-        if self.currentServer != None:
+        if self.currentControl != None:
             if _debug:
                 print("Killing Radio's Previous Process...")
             self.serverKill()
             time.sleep(2)
+            os.system('hackrf_spiflash -R')
         if radioType == "TX":
             if _debug:
                 print("Starting Tx Process")
@@ -344,15 +349,12 @@ class Control():
         if _debug:
             print("CONNECTING...")
         # Wait for server to start
-        time.sleep(5)
         # Stop server
         #if radioType == "TX":
             #if _debug:
                 #print("If Radio is not in ZMQ Mode...")
                 #print("Stopping Transmitter...")
             #self.currentControl.stop()
-        if _debug:
-                print("CONNECTION SUCCESSFUL! FLOWGRAPGHS STOPPED!")
 
     def setReceiver(self):
         if _debug:
@@ -363,6 +365,7 @@ class Control():
                 print("Killing Radio's Previous Process...")
             self.serverKill()
             time.sleep(2)
+            os.system('hackrf_spiflash -R')
         if _debug:
             print("Starting Rx Process")
         self.currentControl = self.Rx
@@ -376,11 +379,14 @@ class Control():
             print("Receiver Opened")
 
     def zmqCheck(self):
+        time.sleep(5)
         self.scanRadio("LOW")
         self.scanRadio("MID")
         self.scanRadio("HIGH")
         if _debug:
-            print(self.dictTable)
+            freqList=self.dictTable.keys()
+            for freq in freqList:
+                print('{key} : {power:.3}dB'.format(key = freq, power = self.dictTable.get(freq)))
 
     def scanRadio(self,freq):
         self.selectFreq(False,freq)
@@ -419,7 +425,7 @@ class Control():
         power = 10*np.log((np.dot(np.conj(temp_array), temp_array))/temp_array.size)
         if _debug:
             print("Power Calculated")
-        self.dictTable.update({freq: power})
+        self.dictTable.update({freq: np.real(power)})
         if _debug:
             print("Wrote to Dictionary")
 
@@ -443,9 +449,13 @@ class Control():
         #self.changeConstell()
         #self.changeAmp()
         #self.currentControl.configureFile()
+        
+    def cleanUpReceiver(self,location):
+        mergercv = Merge(str(os.getcwd())+'\Receive', str(os.getcwd())+'\Receive', 'output'+location.suffix)
+        mergercv(cleanup=True)
 
-    def getMissing(self):
-        myarray = (pk.depacketize((str(os.getcwd())+'/Received/received.ddi'),(str(os.getcwd())+'/Received/input.txt')))
+    def getMissing(self,name):
+        myarray = (pk.depacketize((str(os.getcwd())+'/Received/received.ddi'),(str(os.getcwd())+'/Received/{filename}'.format(filename=name))))
         if _debug:
             print(myarray)
         return myarray
@@ -480,15 +490,16 @@ def main(top_block_cls=Control(freq=915.e6)):
         # If there is a selected file
         label_update.configure(text="Transmitting...")
         if ct.fileLocation != "":
-            cleanup=pk.packetize(ct.fileLocation,str(os.getcwd()))
+            filepath = pathlib.PurePath(ct.fileLocation)
+            pk.packetize(ct.fileLocation,str(os.getcwd()))
             if _debug:
                 print("Receiver Started")
-            #ct.setRadio("TX")
+            ct.setRadio("TX")
             while True:
                 ct.configureRadios()
                 #ct.startRadios()
                 ct.setRadio("TX")
-                time.sleep(5)
+                time.sleep(1)
                 if _debug:
                     print("Starting Receiver")
                 ct.other.setReceiver()
@@ -501,7 +512,7 @@ def main(top_block_cls=Control(freq=915.e6)):
                 ct.serverKill()
                 time.sleep(5)
                 ct.other.setRadio("ZMQ")
-                received= (ct.other.getMissing())
+                received= (ct.other.getMissing(filepath.name))
                 if not received:
                     label_update.configure(text="Done!")
                     break
@@ -509,12 +520,15 @@ def main(top_block_cls=Control(freq=915.e6)):
                     pk.retransmit(received,ct.fileLocation,str(os.getcwd()))
                     ct.other.zmqCheck()
                     label_update.configure(text="Retransmitting...")
+            ct.other.cleanUpReceiver(ct.fileLocation)
+            mergexmt = Merge(filepath.parent, filepath.parent, filepath.name)
+            mergexmt.merge(cleanup=True)
             #pk.cleanup(cleanup)
 
         # If no file is selected
         else:
             print("No File Selected")
-            
+                
 
     def closeProgram():
         # Kill both radio's 

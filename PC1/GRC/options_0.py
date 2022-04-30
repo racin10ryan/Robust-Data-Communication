@@ -31,6 +31,7 @@ from gnuradio.filter import firdes
 import sip
 from build_packet_new import build_packet_new  # grc-generated hier_block
 from gnuradio import blocks
+import pmt
 from gnuradio import digital
 from gnuradio import filter
 from gnuradio import gr
@@ -50,7 +51,7 @@ from gnuradio import qtgui
 
 class options_0(gr.top_block, Qt.QWidget):
 
-    def __init__(self, freq=922e6, samp_rate=2e6, transmit_divider=1/50):
+    def __init__(self, freq=200e6, samp_rate=2e6, transmit_divider=1/50):
         gr.top_block.__init__(self, "Tx_R1", catch_exceptions=True)
         Qt.QWidget.__init__(self)
         self.setWindowTitle("Tx_R1")
@@ -267,9 +268,10 @@ class options_0(gr.top_block, Qt.QWidget):
             payload_constell=payload_chosen_constellation,
             samp_rate=samp_rate,
         )
-        self.blocks_vector_source_x_0 = blocks.vector_source_b((0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1), True, 1, [])
         self.blocks_multiply_const_vxx_0_0 = blocks.multiply_const_cc(transmit_divider)
         self.blocks_interleaved_char_to_complex_0 = blocks.interleaved_char_to_complex(False,1.0)
+        self.blocks_file_source_0_0 = blocks.file_source(gr.sizeof_char*1, 'C:\\Users\\racin\\Downloads\\17500-ma1.pdf', False, 0, 0)
+        self.blocks_file_source_0_0.set_begin_tag(pmt.PMT_NIL)
         self.blocks_copy_0 = blocks.copy(gr.sizeof_char*1)
         self.blocks_copy_0.set_enabled(True)
 
@@ -278,10 +280,10 @@ class options_0(gr.top_block, Qt.QWidget):
         # Connections
         ##################################################
         self.connect((self.blocks_copy_0, 0), (self.build_packet_new_0_0, 0))
+        self.connect((self.blocks_file_source_0_0, 0), (self.blocks_copy_0, 0))
+        self.connect((self.blocks_file_source_0_0, 0), (self.blocks_interleaved_char_to_complex_0, 0))
         self.connect((self.blocks_interleaved_char_to_complex_0, 0), (self.qtgui_time_sink_x_0_2_0, 0))
         self.connect((self.blocks_multiply_const_vxx_0_0, 0), (self.rational_resampler_xxx_0, 0))
-        self.connect((self.blocks_vector_source_x_0, 0), (self.blocks_copy_0, 0))
-        self.connect((self.blocks_vector_source_x_0, 0), (self.blocks_interleaved_char_to_complex_0, 0))
         self.connect((self.build_packet_new_0_0, 0), (self.blocks_multiply_const_vxx_0_0, 0))
         self.connect((self.rational_resampler_xxx_0, 0), (self.osmosdr_sink_0_1, 0))
         self.connect((self.rational_resampler_xxx_0, 0), (self.qtgui_freq_sink_x_0_0, 0))
@@ -334,7 +336,7 @@ class options_0(gr.top_block, Qt.QWidget):
 def argument_parser():
     parser = ArgumentParser()
     parser.add_argument(
-        "--freq", dest="freq", type=eng_float, default=eng_notation.num_to_str(float(922e6)),
+        "--freq", dest="freq", type=eng_float, default=eng_notation.num_to_str(float(200e6)),
         help="Set Frequency [default=%(default)r]")
     parser.add_argument(
         "--samp-rate", dest="samp_rate", type=eng_float, default=eng_notation.num_to_str(float(2e6)),

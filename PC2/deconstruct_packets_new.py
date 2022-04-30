@@ -89,8 +89,6 @@ class deconstruct_packets_new(gr.hier_block2):
         self.digital_crc32_bb_0 = digital.crc32_bb(True, packet_length_tag_key, False)
         self.digital_constellation_decoder_cb_0_0 = digital.constellation_decoder_cb(header_mod)
         self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(payload_mod)
-        self.blocks_throttle_1 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate,True)
-        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_char*1, samp_rate,True)
         self.blocks_tag_gate_0 = blocks.tag_gate(gr.sizeof_char * 1, False)
         self.blocks_tag_gate_0.set_single_key("")
         self.blocks_repack_bits_bb_0_0_0_2 = blocks.repack_bits_bb(payload_mod.bits_per_symbol(), 8, packet_length_tag_key, True, gr.GR_LSB_FIRST)
@@ -111,12 +109,9 @@ class deconstruct_packets_new(gr.hier_block2):
         self.connect((self.blocks_delay_0, 0), (self.blocks_multiply_xx_0, 1))
         self.connect((self.blocks_multiply_const_vxx_0, 0), (self.digital_constellation_decoder_cb_0, 0))
         self.connect((self.blocks_multiply_xx_0, 0), (self.digital_header_payload_demux_0_2, 0))
-        self.connect((self.blocks_pack_k_bits_bb_0, 0), (self.blocks_throttle_0, 0))
+        self.connect((self.blocks_pack_k_bits_bb_0, 0), (self.blocks_tag_gate_0, 0))
         self.connect((self.blocks_repack_bits_bb_0_0_0_2, 0), (self.blocks_char_to_float_0, 0))
         self.connect((self.blocks_tag_gate_0, 0), (self, 0))
-        self.connect((self.blocks_throttle_0, 0), (self.blocks_tag_gate_0, 0))
-        self.connect((self.blocks_throttle_1, 0), (self.blocks_delay_0, 0))
-        self.connect((self.blocks_throttle_1, 0), (self.digital_ofdm_sync_sc_cfb_0, 0))
         self.connect((self.digital_constellation_decoder_cb_0, 0), (self.blocks_repack_bits_bb_0_0_0_2, 0))
         self.connect((self.digital_constellation_decoder_cb_0_0, 0), (self.digital_packet_headerparser_b_0_2, 0))
         self.connect((self.digital_crc32_bb_0, 0), (self.blocks_pack_k_bits_bb_0, 0))
@@ -132,7 +127,8 @@ class deconstruct_packets_new(gr.hier_block2):
         self.connect((self.fec_extended_tagged_decoder_0_0, 0), (self.digital_crc32_bb_0, 0))
         self.connect((self.fft_vxx_0_0, 0), (self.digital_ofdm_chanest_vcvc_0, 0))
         self.connect((self.fft_vxx_1, 0), (self.digital_ofdm_frame_equalizer_vcvc_1, 0))
-        self.connect((self, 0), (self.blocks_throttle_1, 0))
+        self.connect((self, 0), (self.blocks_delay_0, 0))
+        self.connect((self, 0), (self.digital_ofdm_sync_sc_cfb_0, 0))
 
 
     def get_header_mod(self):
@@ -159,8 +155,6 @@ class deconstruct_packets_new(gr.hier_block2):
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
-        self.blocks_throttle_0.set_sample_rate(self.samp_rate)
-        self.blocks_throttle_1.set_sample_rate(self.samp_rate)
 
     def get_thresh(self):
         return self.thresh

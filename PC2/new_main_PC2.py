@@ -13,6 +13,8 @@ from tkinter import filedialog
 import zmq
 import numpy as np
 import threading
+import pathlib
+from filesplit.merge import Merge
 
 
 tempFreqVariable = "HIGH"
@@ -25,6 +27,7 @@ class Control():
         #Computer 1
         #self.server = SimpleXMLRPCServer(("localhost", 8006), allow_none=True)
         #Computer 2
+        #self.server = SimpleXMLRPCServer(("192.168.254.37", 8007), allow_none=True)
         self.server = SimpleXMLRPCServer(("localhost", 8007), allow_none=True)
         ################################## Register Functions #################################
         self.server.register_instance(self)
@@ -39,7 +42,8 @@ class Control():
         #self.other = ServerProxy('http://'+'localhost'+':8007')
         #Computer 2
         self.rdZMQ = ServerProxy('http://'+'localhost'+':8005')
-        self.other = ServerProxy('http://'+'localhost'+':8006')
+        self.other = ServerProxy('http://'+'192.168.254.133'+':8006')
+        #self.other = ServerProxy('http://'+'localhost'+':8006')
 
         ############################################# ZMQ Objects ############################################
         #Computer 1
@@ -94,7 +98,7 @@ class Control():
         ############################## highband ##############################
         ################## BPSK ##################
         self.hbTXbpsk = 1/47
-        self.hbRxThresh=920e-3
+        self.hbRxThresh=915e-3
         self.hbIFbpsk = 0
         self.hbBBbpsk = 0
         ################## QPSK ##################
@@ -340,16 +344,6 @@ class Control():
                 shell=True, preexec_fn=os.setsid)
         if _debug:
             print("CONNECTING...")
-        # Wait for server to start
-        time.sleep(5)
-        # Stop server
-        #if radioType == "TX":
-            #if _debug:
-                #print("If Radio is not in ZMQ Mode...")
-                #print("Stopping Transmitter...")
-            #self.currentControl.stop()
-        if _debug:
-                print("CONNECTION SUCCESSFUL! FLOWGRAPGHS STOPPED!")
 
     def setReceiver(self):
         if _debug:
@@ -373,6 +367,7 @@ class Control():
             print("Receiver Opened")
 
     def zmqCheck(self):
+        time.sleep(5)
         self.scanRadio("LOW")
         self.scanRadio("MID")
         self.scanRadio("HIGH")
@@ -441,9 +436,13 @@ class Control():
         #self.changeAmp()
         #self.currentControl.configureFile()
 
+    def cleanUpReceiver(self,location):
+        mergercv = Merge(str(os.getcwd())+'\Receive', str(os.getcwd())+'\Receive', 'output'+location.suffix)
+        mergercv(cleanup=True)
 
-    def getMissing(self):
-        myarray = (pk.depacketize((str(os.getcwd())+'/Received/received.ddi'),(str(os.getcwd())+'/Received/input.txt')))
+
+    def getMissing(self,name):
+        myarray = (pk.depacketize((str(os.getcwd())+'/Received/received.ddi'),(str(os.getcwd())+'/Received/{filename}'.format(filename=name))))
         if _debug:
             print(myarray)
         return myarray
@@ -478,7 +477,8 @@ def main(top_block_cls=Control(freq=915.e6)):
         # If there is a selected file
         label_update.configure(text="Transmitting...")
         if ct.fileLocation != "":
-            cleanup=pk.packetize(ct.fileLocation,str(os.getcwd()))
+            filepath = pathlib.PurePath(ct.fileLocation)
+            pk.packetize(ct.fileLocation,str(os.getcwd()))
             if _debug:
                 print("Receiver Started")
             #ct.setRadio("TX")
@@ -486,7 +486,7 @@ def main(top_block_cls=Control(freq=915.e6)):
                 ct.configureRadios()
                 #ct.startRadios()
                 ct.setRadio("TX")
-                time.sleep(5)
+                time.sleep(1)
                 if _debug:
                     print("Starting Receiver")
                 ct.other.setReceiver()
@@ -497,9 +497,9 @@ def main(top_block_cls=Control(freq=915.e6)):
                     time.sleep(1)
                     poll=ct.currentServer.poll()
                 ct.serverKill()
-                time.sleep(3)
+                time.sleep(5)
                 ct.other.setRadio("ZMQ")
-                received= (ct.other.getMissing())
+                received= (ct.other.getMissing(filepath.name))
                 if not received:
                     label_update.configure(text="Done!")
                     break
@@ -507,7 +507,10 @@ def main(top_block_cls=Control(freq=915.e6)):
                     pk.retransmit(received,ct.fileLocation,str(os.getcwd()))
                     ct.other.zmqCheck()
                     label_update.configure(text="Retransmitting...")
-            pk.cleanup(cleanup)
+            ct.other.cleanUpReceiver(ct.fileLocation)
+            mergexmt = Merge(filepath, filepath, filepath.name)
+            #pk.cleanup(cleanup)
+
         # If no file is selected
         else:
             print("No File Selected")

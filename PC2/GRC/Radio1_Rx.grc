@@ -57,7 +57,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [176, 12.0]
+    coordinate: [184, 116.0]
     rotation: 0
     state: enabled
 - name: blocks_copy_0
@@ -76,7 +76,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [472, 444.0]
+    coordinate: [360, 396.0]
     rotation: 0
     state: true
 - name: blocks_file_sink_0
@@ -94,7 +94,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1080, 436.0]
+    coordinate: [952, 380.0]
     rotation: 0
     state: enabled
 - name: blocks_interleaved_char_to_complex_0
@@ -111,7 +111,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [968, 540.0]
+    coordinate: [768, 508.0]
     rotation: 0
     state: enabled
 - name: deconstruct_packets_new_0
@@ -131,7 +131,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [720, 428.0]
+    coordinate: [568, 364.0]
     rotation: 0
     state: enabled
 - name: freq
@@ -148,7 +148,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [624, 12.0]
+    coordinate: [304, 12.0]
     rotation: 0
     state: true
 - name: osmosdr_source_0_1_0
@@ -505,7 +505,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [136, 348.0]
+    coordinate: [72, 308.0]
     rotation: 0
     state: enabled
 - name: qtgui_freq_sink_x_0_0
@@ -586,7 +586,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [704, 260.0]
+    coordinate: [568, 196.0]
     rotation: 0
     state: enabled
 - name: qtgui_time_sink_x_0_2
@@ -683,7 +683,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1176, 524.0]
+    coordinate: [952, 492.0]
     rotation: 0
     state: enabled
 - name: rxBB
@@ -700,7 +700,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [864, 12.0]
+    coordinate: [552, 12.0]
     rotation: 0
     state: enabled
 - name: rxIF
@@ -717,7 +717,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [728, 12.0]
+    coordinate: [416, 12.0]
     rotation: 0
     state: enabled
 - name: rxThresh
@@ -729,12 +729,12 @@ blocks:
     label: Threshold
     short_id: ''
     type: eng_float
-    value: '0.915'
+    value: '0.925'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1040, 12.0]
+    coordinate: [728, 12.0]
     rotation: 0
     state: enabled
 - name: samp_rate
@@ -751,7 +751,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [496, 12.0]
+    coordinate: [184, 12.0]
     rotation: 0
     state: true
 - name: xmlrpc_server_0_0
@@ -765,7 +765,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [16, 116.0]
+    coordinate: [8, 116.0]
     rotation: 0
     state: true
 

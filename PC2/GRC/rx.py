@@ -49,7 +49,7 @@ from gnuradio import qtgui
 
 class rx(gr.top_block, Qt.QWidget):
 
-    def __init__(self, freq=908e6, rxBB=0, rxIF=0, rxThresh=0.915, samp_rate=2e6):
+    def __init__(self, freq=908e6, rxBB=0, rxIF=0, rxThresh=0.925, samp_rate=2e6):
         gr.top_block.__init__(self, "Rx", catch_exceptions=True)
         Qt.QWidget.__init__(self)
         self.setWindowTitle("Rx")
@@ -303,7 +303,7 @@ def argument_parser():
         "--rxIF", dest="rxIF", type=intx, default=0,
         help="Set Receiver IF Gain [default=%(default)r]")
     parser.add_argument(
-        "--rxThresh", dest="rxThresh", type=eng_float, default=eng_notation.num_to_str(float(0.915)),
+        "--rxThresh", dest="rxThresh", type=eng_float, default=eng_notation.num_to_str(float(0.925)),
         help="Set Threshold [default=%(default)r]")
     parser.add_argument(
         "--samp-rate", dest="samp_rate", type=eng_float, default=eng_notation.num_to_str(float(2e6)),
