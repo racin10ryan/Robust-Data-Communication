@@ -226,7 +226,7 @@ class txr2(gr.top_block, Qt.QWidget):
         self.blocks_file_source_0_0 = blocks.file_source(gr.sizeof_char*1, '/home/ryan/Documents/Tests/StarWars60.wav', False, 0, 0)
         self.blocks_file_source_0_0.set_begin_tag(pmt.PMT_NIL)
         self.blocks_copy_0 = blocks.copy(gr.sizeof_char*1)
-        self.blocks_copy_0.set_enabled(False)
+        self.blocks_copy_0.set_enabled(True)
 
 
         ##################################################

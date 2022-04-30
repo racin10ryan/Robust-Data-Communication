@@ -223,7 +223,7 @@ class txr1(gr.top_block, Qt.QWidget):
         )
         self.blocks_multiply_const_vxx_0_0 = blocks.multiply_const_cc(transmit_divider)
         self.blocks_interleaved_char_to_complex_0 = blocks.interleaved_char_to_complex(False,1.0)
-        self.blocks_file_source_0_0 = blocks.file_source(gr.sizeof_char*1, '/home/ryan/Documents/Tests/StarWars60.wav', False, 0, 0)
+        self.blocks_file_source_0_0 = blocks.file_source(gr.sizeof_char*1, '/media/ryan/New Volume/Senior Design/Working On/packet.ddi', False, 0, 0)
         self.blocks_file_source_0_0.set_begin_tag(pmt.PMT_NIL)
         self.blocks_copy_0 = blocks.copy(gr.sizeof_char*1)
         self.blocks_copy_0.set_enabled(False)
@@ -254,14 +254,14 @@ class txr1(gr.top_block, Qt.QWidget):
     def enableFlow(self, d_enable):
         self.blocks_copy_0.set_enabled(d_enable)
 
-    def configureFile(self, fileLocation):
+    def configureFile(self):
         print("Disconnecting File source block")
         self.disconnect((self.blocks_file_source_0_0, 0), (self.blocks_copy_0, 0))
         self.disconnect((self.blocks_file_source_0_0, 0), (self.blocks_interleaved_char_to_complex_0, 0))
         print("Close File source block")
         self.blocks_file_source_0_0.close()
         print("Creating New File Source block")
-        self.blocks_file_source_0_0 = blocks.file_source(gr.sizeof_char*1, fileLocation, False, 0, 0)
+        self.blocks_file_source_0_0 = blocks.file_source(gr.sizeof_char*1, '/media/ryan/New Volume/Senior Design/Working On/packet.ddi', False, 0, 0)
         self.blocks_file_source_0_0.set_begin_tag(pmt.PMT_NIL)
         print("Connecting New File Source block")
         self.connect((self.blocks_file_source_0_0, 0), (self.blocks_copy_0, 0))

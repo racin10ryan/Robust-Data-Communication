@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: GPL-3.0
 #
 # GNU Radio Python Flow Graph
-# Title: Rx_R1
+# Title: Rx_R2
 # Author: ryan
 # GNU Radio version: 3.10.1.1
 
@@ -47,12 +47,12 @@ import time
 
 from gnuradio import qtgui
 
-class rxr1(gr.top_block, Qt.QWidget):
+class rxr2(gr.top_block, Qt.QWidget):
 
-    def __init__(self, freq=915e6, rxBB=15, rxIF=40, samp_rate=2e6):
-        gr.top_block.__init__(self, "Rx_R1", catch_exceptions=True)
+    def __init__(self, freq=5.8e9, rxBB=0, rxIF=40, samp_rate=2e6):
+        gr.top_block.__init__(self, "Rx_R2", catch_exceptions=True)
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("Rx_R1")
+        self.setWindowTitle("Rx_R2")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -70,7 +70,7 @@ class rxr1(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "rxr1")
+        self.settings = Qt.QSettings("GNU Radio", "rxr2")
 
         try:
             if StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
@@ -96,11 +96,11 @@ class rxr1(gr.top_block, Qt.QWidget):
         ##################################################
         # Blocks
         ##################################################
-        self.xmlrpc_server_0_0 = SimpleXMLRPCServer(('localhost', 8001), allow_none=True)
-        self.xmlrpc_server_0_0.register_instance(self)
-        self.xmlrpc_server_0_0_thread = threading.Thread(target=self.xmlrpc_server_0_0.serve_forever)
-        self.xmlrpc_server_0_0_thread.daemon = True
-        self.xmlrpc_server_0_0_thread.start()
+        self.xmlrpc_server_0 = SimpleXMLRPCServer(('localhost', 8003), allow_none=True)
+        self.xmlrpc_server_0.register_instance(self)
+        self.xmlrpc_server_0_thread = threading.Thread(target=self.xmlrpc_server_0.serve_forever)
+        self.xmlrpc_server_0_thread.daemon = True
+        self.xmlrpc_server_0_thread.start()
         self.qtgui_time_sink_x_0_2 = qtgui.time_sink_c(
             1024, #size
             samp_rate, #samp_rate
@@ -216,7 +216,7 @@ class rxr1(gr.top_block, Qt.QWidget):
             samp_rate=samp_rate,
         )
         self.blocks_interleaved_char_to_complex_0 = blocks.interleaved_char_to_complex(False,1.0)
-        self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_char*1, '/home/ryan/Documents/Tests/output.txt', False)
+        self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_char*1, '/media/ryan/New Volume/Senior Design/Working On/Received/received.ddi', False)
         self.blocks_file_sink_0.set_unbuffered(False)
         self.blocks_copy_0 = blocks.copy(gr.sizeof_gr_complex*1)
         self.blocks_copy_0.set_enabled(False)
@@ -232,9 +232,21 @@ class rxr1(gr.top_block, Qt.QWidget):
         self.connect((self.deconstruct_packets_new_0, 0), (self.blocks_interleaved_char_to_complex_0, 0))
         self.connect((self.osmosdr_source_0_1, 0), (self.blocks_copy_0, 0))
 
+    def changeConstellations(self, constellString):
+        temp = None
+        if constellString == "BPSK":
+            temp = digital.constellation_bpsk().base()
+        elif constellString == "QPSK":
+            temp = digital.constellation_qpsk().base()
+        elif constellString == "16QAM":
+            temp = digital.constellation_16qam().base()
+        self.set_payload_chosen_constellation(temp)
+
+    def enableFlow(self, d_enable):
+        self.blocks_copy_0.set_enabled(d_enable)
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "rxr1")
+        self.settings = Qt.QSettings("GNU Radio", "rxr2")
         self.settings.setValue("geometry", self.saveGeometry())
         self.stop()
         self.wait()
@@ -279,17 +291,30 @@ class rxr1(gr.top_block, Qt.QWidget):
 
     def set_payload_chosen_constellation(self, payload_chosen_constellation):
         self.payload_chosen_constellation = payload_chosen_constellation
-        self.deconstruct_packets_new_0.set_payload_mod(self.payload_chosen_constellation)
+        self.disconnect((self.blocks_copy_0, 0), (self.deconstruct_packets_new_0, 0))
+        self.disconnect((self.deconstruct_packets_new_0, 0), (self.blocks_file_sink_0, 0))
+        self.disconnect((self.deconstruct_packets_new_0, 0), (self.blocks_interleaved_char_to_complex_0, 0))
+
+        self.deconstruct_packets_new_0 = deconstruct_packets_new(
+            header_mod=digital.constellation_bpsk(),
+            multiply=1/128,
+            payload_mod=payload_chosen_constellation,
+            samp_rate=self.samp_rate,
+        )
+
+        self.connect((self.blocks_copy_0, 0), (self.deconstruct_packets_new_0, 0))
+        self.connect((self.deconstruct_packets_new_0, 0), (self.blocks_file_sink_0, 0))
+        self.connect((self.deconstruct_packets_new_0, 0), (self.blocks_interleaved_char_to_complex_0, 0))
 
 
 
 def argument_parser():
     parser = ArgumentParser()
     parser.add_argument(
-        "--freq", dest="freq", type=eng_float, default=eng_notation.num_to_str(float(915e6)),
+        "--freq", dest="freq", type=eng_float, default=eng_notation.num_to_str(float(5.8e9)),
         help="Set Frequency [default=%(default)r]")
     parser.add_argument(
-        "--rxBB", dest="rxBB", type=intx, default=15,
+        "--rxBB", dest="rxBB", type=intx, default=0,
         help="Set Receiver Baseband Gain [default=%(default)r]")
     parser.add_argument(
         "--rxIF", dest="rxIF", type=intx, default=40,
@@ -300,7 +325,7 @@ def argument_parser():
     return parser
 
 
-def main(top_block_cls=rxr1, options=None):
+def main(top_block_cls=rxr2, options=None):
     if options is None:
         options = argument_parser().parse_args()
 

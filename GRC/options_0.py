@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: GPL-3.0
 #
 # GNU Radio Python Flow Graph
-# Title: Rx_R1
+# Title: Tx_R1
 # Author: ryan
 # GNU Radio version: 3.10.1.1
 
@@ -29,8 +29,9 @@ from PyQt5 import Qt
 from gnuradio import qtgui
 from gnuradio.filter import firdes
 import sip
-from deconstruct_packets_new import deconstruct_packets_new  # grc-generated hier_block
+from build_packet_new import build_packet_new  # grc-generated hier_block
 from gnuradio import blocks
+import pmt
 from gnuradio import digital
 from gnuradio import gr
 from gnuradio.fft import window
@@ -40,6 +41,7 @@ from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
 from xmlrpc.server import SimpleXMLRPCServer
 import threading
+import options_0_epy_block_0 as epy_block_0  # embedded python block
 import osmosdr
 import time
 
@@ -47,12 +49,12 @@ import time
 
 from gnuradio import qtgui
 
-class rxr1(gr.top_block, Qt.QWidget):
+class options_0(gr.top_block, Qt.QWidget):
 
-    def __init__(self, freq=915e6, rxBB=15, rxIF=40, samp_rate=2e6):
-        gr.top_block.__init__(self, "Rx_R1", catch_exceptions=True)
+    def __init__(self, freq=915e6, samp_rate=2e6, transmit_divider=1/10):
+        gr.top_block.__init__(self, "Tx_R1", catch_exceptions=True)
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("Rx_R1")
+        self.setWindowTitle("Tx_R1")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -70,7 +72,7 @@ class rxr1(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "rxr1")
+        self.settings = Qt.QSettings("GNU Radio", "options_0")
 
         try:
             if StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
@@ -84,9 +86,8 @@ class rxr1(gr.top_block, Qt.QWidget):
         # Parameters
         ##################################################
         self.freq = freq
-        self.rxBB = rxBB
-        self.rxIF = rxIF
         self.samp_rate = samp_rate
+        self.transmit_divider = transmit_divider
 
         ##################################################
         # Variables
@@ -96,15 +97,66 @@ class rxr1(gr.top_block, Qt.QWidget):
         ##################################################
         # Blocks
         ##################################################
-        self.xmlrpc_server_0_0 = SimpleXMLRPCServer(('localhost', 8001), allow_none=True)
-        self.xmlrpc_server_0_0.register_instance(self)
-        self.xmlrpc_server_0_0_thread = threading.Thread(target=self.xmlrpc_server_0_0.serve_forever)
-        self.xmlrpc_server_0_0_thread.daemon = True
-        self.xmlrpc_server_0_0_thread.start()
+        self.xmlrpc_server_0 = SimpleXMLRPCServer(('localhost', 8000), allow_none=True)
+        self.xmlrpc_server_0.register_instance(self)
+        self.xmlrpc_server_0_thread = threading.Thread(target=self.xmlrpc_server_0.serve_forever)
+        self.xmlrpc_server_0_thread.daemon = True
+        self.xmlrpc_server_0_thread.start()
+        self.qtgui_time_sink_x_0_2_0 = qtgui.time_sink_c(
+            1024, #size
+            samp_rate, #samp_rate
+            'File Source Time', #name
+            1, #number of inputs
+            None # parent
+        )
+        self.qtgui_time_sink_x_0_2_0.set_update_time(0.10)
+        self.qtgui_time_sink_x_0_2_0.set_y_axis(-1, 1)
+
+        self.qtgui_time_sink_x_0_2_0.set_y_label('Amplitude', "")
+
+        self.qtgui_time_sink_x_0_2_0.enable_tags(True)
+        self.qtgui_time_sink_x_0_2_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, 0, "")
+        self.qtgui_time_sink_x_0_2_0.enable_autoscale(False)
+        self.qtgui_time_sink_x_0_2_0.enable_grid(False)
+        self.qtgui_time_sink_x_0_2_0.enable_axis_labels(True)
+        self.qtgui_time_sink_x_0_2_0.enable_control_panel(False)
+        self.qtgui_time_sink_x_0_2_0.enable_stem_plot(False)
+
+
+        labels = ['Signal 1', 'Signal 2', 'Signal 3', 'Signal 4', 'Signal 5',
+            'Signal 6', 'Signal 7', 'Signal 8', 'Signal 9', 'Signal 10']
+        widths = [1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1]
+        colors = ['blue', 'red', 'green', 'black', 'cyan',
+            'magenta', 'yellow', 'dark red', 'dark green', 'dark blue']
+        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
+            1.0, 1.0, 1.0, 1.0, 1.0]
+        styles = [1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1]
+        markers = [-1, -1, -1, -1, -1,
+            -1, -1, -1, -1, -1]
+
+
+        for i in range(2):
+            if len(labels[i]) == 0:
+                if (i % 2 == 0):
+                    self.qtgui_time_sink_x_0_2_0.set_line_label(i, "Re{{Data {0}}}".format(i/2))
+                else:
+                    self.qtgui_time_sink_x_0_2_0.set_line_label(i, "Im{{Data {0}}}".format(i/2))
+            else:
+                self.qtgui_time_sink_x_0_2_0.set_line_label(i, labels[i])
+            self.qtgui_time_sink_x_0_2_0.set_line_width(i, widths[i])
+            self.qtgui_time_sink_x_0_2_0.set_line_color(i, colors[i])
+            self.qtgui_time_sink_x_0_2_0.set_line_style(i, styles[i])
+            self.qtgui_time_sink_x_0_2_0.set_line_marker(i, markers[i])
+            self.qtgui_time_sink_x_0_2_0.set_line_alpha(i, alphas[i])
+
+        self._qtgui_time_sink_x_0_2_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0_2_0.qwidget(), Qt.QWidget)
+        self.top_layout.addWidget(self._qtgui_time_sink_x_0_2_0_win)
         self.qtgui_time_sink_x_0_2 = qtgui.time_sink_c(
             1024, #size
             samp_rate, #samp_rate
-            'Receiver Time', #name
+            'Transmit Time', #name
             1, #number of inputs
             None # parent
         )
@@ -152,89 +204,50 @@ class rxr1(gr.top_block, Qt.QWidget):
 
         self._qtgui_time_sink_x_0_2_win = sip.wrapinstance(self.qtgui_time_sink_x_0_2.qwidget(), Qt.QWidget)
         self.top_layout.addWidget(self._qtgui_time_sink_x_0_2_win)
-        self.qtgui_freq_sink_x_0_0 = qtgui.freq_sink_c(
-            1024, #size
-            window.WIN_BLACKMAN_hARRIS, #wintype
-            freq, #fc
-            samp_rate, #bw
-            'Receiver Freqency ', #name
-            1,
-            None # parent
+        self.osmosdr_sink_0_1 = osmosdr.sink(
+            args="numchan=" + str(1) + " " + 'hackrf=0000000000000000f77c60dc235e53c3'
         )
-        self.qtgui_freq_sink_x_0_0.set_update_time(0.10)
-        self.qtgui_freq_sink_x_0_0.set_y_axis(-140, 10)
-        self.qtgui_freq_sink_x_0_0.set_y_label('Relative Gain', 'dB')
-        self.qtgui_freq_sink_x_0_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, 0.0, 0, "")
-        self.qtgui_freq_sink_x_0_0.enable_autoscale(False)
-        self.qtgui_freq_sink_x_0_0.enable_grid(False)
-        self.qtgui_freq_sink_x_0_0.set_fft_average(0.1)
-        self.qtgui_freq_sink_x_0_0.enable_axis_labels(True)
-        self.qtgui_freq_sink_x_0_0.enable_control_panel(False)
-        self.qtgui_freq_sink_x_0_0.set_fft_window_normalized(False)
-
-
-
-        labels = ['', '', '', '', '',
-            '', '', '', '', '']
-        widths = [1, 1, 1, 1, 1,
-            1, 1, 1, 1, 1]
-        colors = ["blue", "red", "green", "black", "cyan",
-            "magenta", "yellow", "dark red", "dark green", "dark blue"]
-        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
-            1.0, 1.0, 1.0, 1.0, 1.0]
-
-        for i in range(1):
-            if len(labels[i]) == 0:
-                self.qtgui_freq_sink_x_0_0.set_line_label(i, "Data {0}".format(i))
-            else:
-                self.qtgui_freq_sink_x_0_0.set_line_label(i, labels[i])
-            self.qtgui_freq_sink_x_0_0.set_line_width(i, widths[i])
-            self.qtgui_freq_sink_x_0_0.set_line_color(i, colors[i])
-            self.qtgui_freq_sink_x_0_0.set_line_alpha(i, alphas[i])
-
-        self._qtgui_freq_sink_x_0_0_win = sip.wrapinstance(self.qtgui_freq_sink_x_0_0.qwidget(), Qt.QWidget)
-        self.top_layout.addWidget(self._qtgui_freq_sink_x_0_0_win)
-        self.osmosdr_source_0_1 = osmosdr.source(
-            args="numchan=" + str(1) + " " + 'hackrf=0000000000000000088869dc294cae1b'
-        )
-        self.osmosdr_source_0_1.set_time_now(osmosdr.time_spec_t(time.time()), osmosdr.ALL_MBOARDS)
-        self.osmosdr_source_0_1.set_sample_rate(samp_rate)
-        self.osmosdr_source_0_1.set_center_freq(freq, 0)
-        self.osmosdr_source_0_1.set_freq_corr(0, 0)
-        self.osmosdr_source_0_1.set_dc_offset_mode(0, 0)
-        self.osmosdr_source_0_1.set_iq_balance_mode(0, 0)
-        self.osmosdr_source_0_1.set_gain_mode(True, 0)
-        self.osmosdr_source_0_1.set_gain(14, 0)
-        self.osmosdr_source_0_1.set_if_gain(rxIF, 0)
-        self.osmosdr_source_0_1.set_bb_gain(rxBB, 0)
-        self.osmosdr_source_0_1.set_antenna('', 0)
-        self.osmosdr_source_0_1.set_bandwidth(samp_rate, 0)
-        self.deconstruct_packets_new_0 = deconstruct_packets_new(
-            header_mod=digital.constellation_bpsk(),
-            multiply=1/128,
-            payload_mod=payload_chosen_constellation,
+        self.osmosdr_sink_0_1.set_time_now(osmosdr.time_spec_t(time.time()), osmosdr.ALL_MBOARDS)
+        self.osmosdr_sink_0_1.set_sample_rate(samp_rate)
+        self.osmosdr_sink_0_1.set_center_freq(freq, 0)
+        self.osmosdr_sink_0_1.set_freq_corr(0, 0)
+        self.osmosdr_sink_0_1.set_gain(14, 0)
+        self.osmosdr_sink_0_1.set_if_gain(47, 0)
+        self.osmosdr_sink_0_1.set_bb_gain(0, 0)
+        self.osmosdr_sink_0_1.set_antenna('', 0)
+        self.osmosdr_sink_0_1.set_bandwidth(samp_rate, 0)
+        self.epy_block_0 = epy_block_0.blk()
+        self.build_packet_new_0_0 = build_packet_new(
+            divide=1,
+            header_constell=digital.constellation_bpsk(),
+            payload_constell=payload_chosen_constellation,
             samp_rate=samp_rate,
         )
+        self.blocks_multiply_const_vxx_0_0 = blocks.multiply_const_cc(transmit_divider)
+        self.blocks_message_debug_0 = blocks.message_debug(True)
         self.blocks_interleaved_char_to_complex_0 = blocks.interleaved_char_to_complex(False,1.0)
-        self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_char*1, '/home/ryan/Documents/Tests/output.txt', False)
-        self.blocks_file_sink_0.set_unbuffered(False)
-        self.blocks_copy_0 = blocks.copy(gr.sizeof_gr_complex*1)
-        self.blocks_copy_0.set_enabled(False)
+        self.blocks_file_source_0_0 = blocks.file_source(gr.sizeof_char*1, '/home/ryan/Documents/Tests/input.txt', False, 0, 0)
+        self.blocks_file_source_0_0.set_begin_tag(pmt.PMT_NIL)
+        self.blocks_copy_0 = blocks.copy(gr.sizeof_char*1)
+        self.blocks_copy_0.set_enabled(True)
 
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.blocks_copy_0, 0), (self.deconstruct_packets_new_0, 0))
-        self.connect((self.blocks_copy_0, 0), (self.qtgui_freq_sink_x_0_0, 0))
-        self.connect((self.blocks_interleaved_char_to_complex_0, 0), (self.qtgui_time_sink_x_0_2, 0))
-        self.connect((self.deconstruct_packets_new_0, 0), (self.blocks_file_sink_0, 0))
-        self.connect((self.deconstruct_packets_new_0, 0), (self.blocks_interleaved_char_to_complex_0, 0))
-        self.connect((self.osmosdr_source_0_1, 0), (self.blocks_copy_0, 0))
+        self.msg_connect((self.epy_block_0, 'Done'), (self.blocks_message_debug_0, 'print'))
+        self.connect((self.blocks_copy_0, 0), (self.build_packet_new_0_0, 0))
+        self.connect((self.blocks_file_source_0_0, 0), (self.blocks_copy_0, 0))
+        self.connect((self.blocks_file_source_0_0, 0), (self.blocks_interleaved_char_to_complex_0, 0))
+        self.connect((self.blocks_interleaved_char_to_complex_0, 0), (self.qtgui_time_sink_x_0_2_0, 0))
+        self.connect((self.blocks_multiply_const_vxx_0_0, 0), (self.epy_block_0, 0))
+        self.connect((self.build_packet_new_0_0, 0), (self.blocks_multiply_const_vxx_0_0, 0))
+        self.connect((self.epy_block_0, 0), (self.osmosdr_sink_0_1, 0))
+        self.connect((self.epy_block_0, 0), (self.qtgui_time_sink_x_0_2, 0))
 
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "rxr1")
+        self.settings = Qt.QSettings("GNU Radio", "options_0")
         self.settings.setValue("geometry", self.saveGeometry())
         self.stop()
         self.wait()
@@ -246,40 +259,32 @@ class rxr1(gr.top_block, Qt.QWidget):
 
     def set_freq(self, freq):
         self.freq = freq
-        self.osmosdr_source_0_1.set_center_freq(self.freq, 0)
-        self.qtgui_freq_sink_x_0_0.set_frequency_range(self.freq, self.samp_rate)
-
-    def get_rxBB(self):
-        return self.rxBB
-
-    def set_rxBB(self, rxBB):
-        self.rxBB = rxBB
-        self.osmosdr_source_0_1.set_bb_gain(self.rxBB, 0)
-
-    def get_rxIF(self):
-        return self.rxIF
-
-    def set_rxIF(self, rxIF):
-        self.rxIF = rxIF
-        self.osmosdr_source_0_1.set_if_gain(self.rxIF, 0)
+        self.osmosdr_sink_0_1.set_center_freq(self.freq, 0)
 
     def get_samp_rate(self):
         return self.samp_rate
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
-        self.deconstruct_packets_new_0.set_samp_rate(self.samp_rate)
-        self.osmosdr_source_0_1.set_sample_rate(self.samp_rate)
-        self.osmosdr_source_0_1.set_bandwidth(self.samp_rate, 0)
-        self.qtgui_freq_sink_x_0_0.set_frequency_range(self.freq, self.samp_rate)
+        self.build_packet_new_0_0.set_samp_rate(self.samp_rate)
+        self.osmosdr_sink_0_1.set_sample_rate(self.samp_rate)
+        self.osmosdr_sink_0_1.set_bandwidth(self.samp_rate, 0)
         self.qtgui_time_sink_x_0_2.set_samp_rate(self.samp_rate)
+        self.qtgui_time_sink_x_0_2_0.set_samp_rate(self.samp_rate)
+
+    def get_transmit_divider(self):
+        return self.transmit_divider
+
+    def set_transmit_divider(self, transmit_divider):
+        self.transmit_divider = transmit_divider
+        self.blocks_multiply_const_vxx_0_0.set_k(self.transmit_divider)
 
     def get_payload_chosen_constellation(self):
         return self.payload_chosen_constellation
 
     def set_payload_chosen_constellation(self, payload_chosen_constellation):
         self.payload_chosen_constellation = payload_chosen_constellation
-        self.deconstruct_packets_new_0.set_payload_mod(self.payload_chosen_constellation)
+        self.build_packet_new_0_0.set_payload_constell(self.payload_chosen_constellation)
 
 
 
@@ -289,18 +294,15 @@ def argument_parser():
         "--freq", dest="freq", type=eng_float, default=eng_notation.num_to_str(float(915e6)),
         help="Set Frequency [default=%(default)r]")
     parser.add_argument(
-        "--rxBB", dest="rxBB", type=intx, default=15,
-        help="Set Receiver Baseband Gain [default=%(default)r]")
-    parser.add_argument(
-        "--rxIF", dest="rxIF", type=intx, default=40,
-        help="Set Receiver IF Gain [default=%(default)r]")
-    parser.add_argument(
         "--samp-rate", dest="samp_rate", type=eng_float, default=eng_notation.num_to_str(float(2e6)),
         help="Set Sample Rate [default=%(default)r]")
+    parser.add_argument(
+        "--transmit-divider", dest="transmit_divider", type=eng_float, default=eng_notation.num_to_str(float(1/10)),
+        help="Set Transmit Divider [default=%(default)r]")
     return parser
 
 
-def main(top_block_cls=rxr1, options=None):
+def main(top_block_cls=options_0, options=None):
     if options is None:
         options = argument_parser().parse_args()
 
@@ -309,7 +311,7 @@ def main(top_block_cls=rxr1, options=None):
         Qt.QApplication.setGraphicsSystem(style)
     qapp = Qt.QApplication(sys.argv)
 
-    tb = top_block_cls(freq=options.freq, rxBB=options.rxBB, rxIF=options.rxIF, samp_rate=options.samp_rate)
+    tb = top_block_cls(freq=options.freq, samp_rate=options.samp_rate, transmit_divider=options.transmit_divider)
 
     tb.start()
 

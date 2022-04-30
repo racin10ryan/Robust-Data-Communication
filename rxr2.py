@@ -49,7 +49,7 @@ from gnuradio import qtgui
 
 class rxr2(gr.top_block, Qt.QWidget):
 
-    def __init__(self, freq=5.8e9, rxBB=0, rxIF=40, samp_rate=2e6):
+    def __init__(self, freq=915e6, rxBB=0, rxIF=40, samp_rate=2e6):
         gr.top_block.__init__(self, "Rx_R2", catch_exceptions=True)
         Qt.QWidget.__init__(self)
         self.setWindowTitle("Rx_R2")
@@ -216,7 +216,7 @@ class rxr2(gr.top_block, Qt.QWidget):
             samp_rate=samp_rate,
         )
         self.blocks_interleaved_char_to_complex_0 = blocks.interleaved_char_to_complex(False,1.0)
-        self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_char*1, '/home/ryan/Documents/Tests/output.txt', False)
+        self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_char*1, '/media/ryan/New Volume/Senior Design/Working On/Received/received.ddi', False)
         self.blocks_file_sink_0.set_unbuffered(False)
         self.blocks_copy_0 = blocks.copy(gr.sizeof_gr_complex*1)
         self.blocks_copy_0.set_enabled(False)

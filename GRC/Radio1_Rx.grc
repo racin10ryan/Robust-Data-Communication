@@ -76,7 +76,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [360, 452.0]
+    coordinate: [440, 452.0]
     rotation: 0
     state: true
 - name: blocks_file_sink_0
@@ -86,7 +86,7 @@ blocks:
     alias: ''
     append: 'False'
     comment: ''
-    file: /home/ryan/Documents/Tests/output.wav
+    file: /home/ryan/Documents/Tests/output.txt
     type: byte
     unbuffered: 'False'
     vlen: '1'
@@ -187,7 +187,7 @@ blocks:
     ant7: ''
     ant8: ''
     ant9: ''
-    args: hackrf=0000000000000000f77c60dc235e53c3
+    args: hackrf=0000000000000000088869dc294cae1b
     bb_gain0: rxBB
     bb_gain1: '20'
     bb_gain10: '20'
@@ -504,7 +504,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [72, 356.0]
+    coordinate: [144, 356.0]
     rotation: 0
     state: enabled
 - name: qtgui_freq_sink_x_0_0
@@ -694,7 +694,7 @@ blocks:
     label: Receiver Baseband Gain
     short_id: ''
     type: intx
-    value: '0'
+    value: '15'
   states:
     bus_sink: false
     bus_source: false
@@ -736,7 +736,7 @@ blocks:
     coordinate: [496, 12.0]
     rotation: 0
     state: true
-- name: xmlrpc_server_0
+- name: xmlrpc_server_0_0
   id: xmlrpc_server
   parameters:
     addr: localhost

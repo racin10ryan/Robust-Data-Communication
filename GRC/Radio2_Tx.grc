@@ -66,7 +66,7 @@ blocks:
     affinity: ''
     alias: ''
     comment: ''
-    enabled: 'False'
+    enabled: 'True'
     maxoutbuf: '0'
     minoutbuf: '0'
     showports: 'False'

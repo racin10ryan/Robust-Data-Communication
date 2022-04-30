@@ -1,4 +1,5 @@
 
+
 def changeConstellations(self, constellString):
         temp = None
         if constellString == "BPSK":
@@ -16,7 +17,7 @@ def changeConstellations(self, constellString):
         self.disconnect((self.blocks_file_source_0_0, 0), (self.blocks_copy_0, 0))
         self.disconnect((self.blocks_file_source_0_0, 0), (self.blocks_interleaved_char_to_complex_0, 0))
         self.blocks_file_source_0_0.close()
-        self.blocks_file_source_0_0 = blocks.file_source(gr.sizeof_char*1, fileLocation, False, 0, 0)
+        self.blocks_file_source_0_0 = blocks.file_source(gr.sizeof_char*1, '/media/ryan/New Volume/Senior Design/Working On/packet.ddi', False, 0, 0)
         self.blocks_file_source_0_0.set_begin_tag(pmt.PMT_NIL)
 
         self.connect((self.blocks_file_source_0_0, 0), (self.blocks_copy_0, 0))

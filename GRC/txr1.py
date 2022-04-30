@@ -39,6 +39,7 @@ import signal
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
+from gnuradio import pdu
 from xmlrpc.server import SimpleXMLRPCServer
 import threading
 import osmosdr
@@ -203,6 +204,9 @@ class txr1(gr.top_block, Qt.QWidget):
 
         self._qtgui_time_sink_x_0_2_win = sip.wrapinstance(self.qtgui_time_sink_x_0_2.qwidget(), Qt.QWidget)
         self.top_layout.addWidget(self._qtgui_time_sink_x_0_2_win)
+        self.pdu_tags_to_pdu_x_0 = pdu.tags_to_pdu_c(pmt.intern('SOB'), pmt.intern('EOB'), 1024, samp_rate, [], False, 0, 0.0)
+        self.pdu_tags_to_pdu_x_0.set_eob_parameters(1, 0)
+        self.pdu_tags_to_pdu_x_0.enable_time_debug(False)
         self.osmosdr_sink_0_1 = osmosdr.sink(
             args="numchan=" + str(1) + " " + 'hackrf=0000000000000000f77c60dc235e53c3'
         )
@@ -222,6 +226,8 @@ class txr1(gr.top_block, Qt.QWidget):
             samp_rate=samp_rate,
         )
         self.blocks_multiply_const_vxx_0_0 = blocks.multiply_const_cc(transmit_divider)
+        self.blocks_message_strobe_0 = blocks.message_strobe(pmt.intern("Test"), 1000)
+        self.blocks_message_debug_0 = blocks.message_debug(True)
         self.blocks_interleaved_char_to_complex_0 = blocks.interleaved_char_to_complex(False,1.0)
         self.blocks_file_source_0_0 = blocks.file_source(gr.sizeof_char*1, '/home/ryan/Documents/Tests/input.txt', False, 0, 0)
         self.blocks_file_source_0_0.set_begin_tag(pmt.PMT_NIL)
@@ -232,6 +238,8 @@ class txr1(gr.top_block, Qt.QWidget):
         ##################################################
         # Connections
         ##################################################
+        self.msg_connect((self.blocks_message_strobe_0, 'strobe'), (self.blocks_message_debug_0, 'print'))
+        self.msg_connect((self.pdu_tags_to_pdu_x_0, 'pdus'), (self.blocks_message_strobe_0, 'set_msg'))
         self.connect((self.blocks_copy_0, 0), (self.build_packet_new_0_0, 0))
         self.connect((self.blocks_file_source_0_0, 0), (self.blocks_copy_0, 0))
         self.connect((self.blocks_file_source_0_0, 0), (self.blocks_interleaved_char_to_complex_0, 0))
@@ -239,6 +247,7 @@ class txr1(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_multiply_const_vxx_0_0, 0), (self.osmosdr_sink_0_1, 0))
         self.connect((self.blocks_multiply_const_vxx_0_0, 0), (self.qtgui_time_sink_x_0_2, 0))
         self.connect((self.build_packet_new_0_0, 0), (self.blocks_multiply_const_vxx_0_0, 0))
+        self.connect((self.build_packet_new_0_0, 0), (self.pdu_tags_to_pdu_x_0, 0))
 
 
     def closeEvent(self, event):
@@ -264,6 +273,7 @@ class txr1(gr.top_block, Qt.QWidget):
         self.build_packet_new_0_0.set_samp_rate(self.samp_rate)
         self.osmosdr_sink_0_1.set_sample_rate(self.samp_rate)
         self.osmosdr_sink_0_1.set_bandwidth(self.samp_rate, 0)
+        self.pdu_tags_to_pdu_x_0.set_rate(self.samp_rate)
         self.qtgui_time_sink_x_0_2.set_samp_rate(self.samp_rate)
         self.qtgui_time_sink_x_0_2_0.set_samp_rate(self.samp_rate)
 
