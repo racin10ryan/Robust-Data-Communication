@@ -4,7 +4,7 @@ This project checks for interference on three channels. After ranking the power 
 Used two HackRF One Radios for testing
 
 Dependencies:
-  -Radioconda: https://github.com/ryanvolz/radioconda
+  - Radioconda: https://github.com/ryanvolz/radioconda
       (Be sure to udpate HackRF Library to latest version)
   - Latest version of HackRF firmware and library: https://github.com/greatscottgadgets/hackrf
   - Other dependencies may be needed. Just check the imports in new_main.py
